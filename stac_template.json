@@ -1,0 +1,30 @@
+{
+    "id": "",
+    "type" : "Feature",
+    "stac_version": "1.0.0",
+    "stac_extensions":[""],
+    "description_path":"",
+    "collection":"",
+    "geometry": {
+        "display": {
+            "coordinates": [[]],
+            "type": "LineString"
+        }
+    }
+    ,
+    "properties":{
+        "data_format":"",
+        "start_datetime":"0000-00-00T00:00:00",
+        "end_datetime": "9999-99-99T99:99:99",
+        "flight_num":"",
+        "pcode": [],
+        "aircraft": "",
+        "variables": [],
+        "location": "",
+        "platform": "",
+        "instruments": [],
+        "pi": ""
+    },
+    "assets":{},
+    "links":[]
+}
