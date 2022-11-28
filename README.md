@@ -9,4 +9,4 @@ Repository for python code to concatenate data sources and construct new flight 
   - Push new records
 
 ## Run Pipeline
-Run with command `python flight_update.py <filedir>`. Unless otherwise specified, __<filedir>__ should simply be jsons
+Run with command `python flight_update.py <filedir>`. Unless otherwise specified, __filedir__ should simply be jsons
