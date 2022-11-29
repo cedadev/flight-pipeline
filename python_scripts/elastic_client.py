@@ -84,29 +84,17 @@ class ESFlightClient:
         yr = ptcode.split('*')[1].split('-')[0]
         mth = ptcode.split('*')[1].split('-')[1]
         day = ptcode.split('*')[1].split('-')[2]
-        try:
-            s1 = self.ys[yr]
-            try:
-                s2 = self.yms[yr + '-' + mth]
-                try:
-                    s3 = self.ymds[yr + '-' + mth + '-' + day]
-
-                    try:
-                        s4 = self.pcodes[pcode]
-                        # Entry already exists
-                        return False
-                    except:
-                        # New pcode-date combo
-                        return True
-                except:
-                    # New ymd
-                    return True
-            except:
-                # New ym
-                return True
-        except:
-            # New year
+        if yr not in self.ys:
             return True
+        if yr + '-' + mth not in self.yms:
+            return True
+        if yr + '-' + mth + '-' + day not in self.ymds:
+            return True
+        if pcode not in self.pcodes:
+            return True
+
+        # If all filters have passed
+        return False
             
 
 if __name__ == "__main__":
