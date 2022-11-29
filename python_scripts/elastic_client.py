@@ -29,7 +29,6 @@ class ESFlightClient:
     def __init__(self, rootdir, outdir):
         self.rootdir = rootdir
         self.outdir = outdir
-        self.ids = []
 
         self.es = Elasticsearch(**self.connection_kwargs)
         if not self.es.indices.exists(self.index):
@@ -66,9 +65,49 @@ class ESFlightClient:
         resp = self.es.search(
             index=self.index,
             body=aggs)
-        self.ids = []
+
+        self.pcodes = {}
+        self.ys, self.yms, self.ymds = {},{},{}
         for bucket in resp['aggregations']['ids']['buckets']:
-            self.ids.append(bucket['key'])
+            ptcode = bucket['key']
+            pcode = ptcode.split('*')[0]
+            yr = ptcode.split('*')[1].split('-')[0]
+            mth = ptcode.split('*')[1].split('-')[1]
+            day = ptcode.split('*')[1].split('-')[2]
+            self.pcodes[pcode] = 1
+            self.ys[yr] = 1
+            self.yms[yr + '-' + mth] = 1
+            self.ymds[yr + '-' + mth + '-' + day] = 1
+
+    def check_ptcode(self, ptcode):
+        pcode = ptcode.split('*')[0]
+        yr = ptcode.split('*')[1].split('-')[0]
+        mth = ptcode.split('*')[1].split('-')[1]
+        day = ptcode.split('*')[1].split('-')[2]
+        try:
+            s1 = self.ys[yr]
+            try:
+                s2 = self.yms[yr + '-' + mth]
+                try:
+                    s3 = self.ymds[yr + '-' + mth + '-' + day]
+
+                    try:
+                        s4 = self.pcodes[pcode]
+                        # Entry already exists
+                        return False
+                    except:
+                        # New pcode-date combo
+                        return True
+                except:
+                    # New ymd
+                    return True
+            except:
+                # New ym
+                return True
+        except:
+            # New year
+            return True
+            
 
 if __name__ == "__main__":
     print(__file__)
