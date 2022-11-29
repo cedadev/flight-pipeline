@@ -9,7 +9,7 @@
 from python_scripts.calculate_coordinates import getCoords, getTimes
 from python_scripts.elastic_client import ESFlightClient
 from python_scripts.archive_meta import ArchiveMeta
-from python_scripts.utils import jsonWrite
+from python_scripts.utils import jsonWrite, jsonRead
 
 import os, sys
 
@@ -26,6 +26,9 @@ def main(rootdir, outdir):
     new_pcodes     = {}
     checked_pcodes = {}
 
+    # Get Stac Template
+    stac_template = jsonRead('.','stac_template.json')
+
     if new_pcodes != {}:
 
         # ES client to determine array of ids
@@ -40,8 +43,10 @@ def main(rootdir, outdir):
         for cpc in checked_pcodes.keys():
             cpc_data = checked_pcodes[cpc]
 
+            stac_record = dict(stac_template)
+
             # Start with Archive Meta Search
-            stac_record = ArchiveMeta(cpc_data).concatInfo()
+            stac_record = ArchiveMeta(cpc_data).concatInfo(stac_record)
 
             # Get Spatial/Temporal Info
             l1b_data = ArchiveData(cpc_data)
@@ -49,6 +54,8 @@ def main(rootdir, outdir):
             stac_record["geometry"]["display"] = l1b_data.getDisplay()
             stac_record["properties"]["start_datetime"] = l1b_data.getStart()
             stac_record["properties"]["end_datetime"] = l1b_data.getEnd()
+
+            # send stac_record to fclient using 'yield'?
 
             # Write stac_record
             if IS_WRITE:
