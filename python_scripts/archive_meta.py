@@ -23,6 +23,9 @@ class ArchiveMeta:
         if os.path.exists(self.path):
             self.getArchiveMetadata()
 
+    def concatInfo(self, template):
+        template['properties'].update(self.getArchiveMetadata())
+
     def rmWhiteSpace(word):
         isword = False
         new_word = ''
