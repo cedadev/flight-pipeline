@@ -26,9 +26,8 @@ class ESFlightClient:
     }
     index = "stac-flightfinder-items"
 
-    def __init__(self, rootdir, outdir):
+    def __init__(self, rootdir):
         self.rootdir = rootdir
-        self.outdir = outdir
 
         self.es = Elasticsearch(**self.connection_kwargs)
         if not self.es.indices.exists(self.index):
@@ -36,7 +35,7 @@ class ESFlightClient:
 
     def bulk_iterator(self, file_list):
         for file in file_list:
-            with open(self.outdir + '/' + file) as f:
+            with open(self.rootdir + '/' + file) as f:
                 con = json.load(f)
                 yield {
                     "_index":self.index,
@@ -46,8 +45,7 @@ class ESFlightClient:
                     "_source":con
                 }
     
-    def push_flights(self):
-        file_list = os.listdir(self.outdir)
+    def push_flights(self, file_list):
         bulk(self.es, self.action_iterator(file_list))
 
     def obtain_ids(self):
