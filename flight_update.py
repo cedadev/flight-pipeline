@@ -1,45 +1,44 @@
 '''
  --- Update Flight records ---
-  - Mechanism for finding new flight ids/paths
+  - Mechanism for uploading new flight records
   - Use ES Client to determine array of ids that currently exists in the index
-  - Construct Metadata 'properties' field
-  - Determine Spatial Coordinates and Temporal dates
   - Push new records
 '''
-from python_scripts.calculate_coordinates import getCoords, getTimes
 from python_scripts.elastic_client import ESFlightClient
-from python_scripts.archive_meta import ArchiveMeta
-from python_scripts.utils import jsonWrite, jsonRead
 
 import os, sys
 
-def invalid_dirs(root, out):
-    return (root == out) or \
-           (root == '') or \
-           (out == '') 
+IS_FORCE = False
 
-def main(rootdir, outdir):
-    if invalid_dirs(rootdir, outdir):
-        print('Error invalid dir structure with root and out')
-        sys.exit()
-    # Mechanism for finding new ids
-    new_pcodes     = {}
-    checked_pcodes = {}
+def main(rootdir):
 
-    # Get Stac Template
-    stac_template = jsonRead('.','stac_template.json')
+    files_list = os.listdir(rootdir)
+    checked_list = []
 
-    if new_pcodes != {}:
+    # ES client to determine array of ids
+    fclient = ESFlightClient(rootdir)
+    fclient.obtain_ids()
+    if not IS_FORCE:
+        for flight in files_list:
+            pcode = flight.split('*')[0]
+            if fclient.check_pcode(pcode):
+                checked_list.append(flight)
+    else:
+        checked_list = list(files_list)
 
-        # ES client to determine array of ids
-        fclient = ESFlightClient(rootdir, outdir)
-        fclient.obtain_ids()
-        for npc in new_pcodes.keys():
-            if fclient.check_pcode(npc):
-                checked_pcodes[npc] = new_pcodes[npc]
+    # Push new flights to index
+    print('New flights: {}'.format(len(checked_list)),end='')
+    if len(checked_list) != len(files_list):
+        print('({} already exist)'.format(len(files_list) - len(checked_list)))
+    else:
+        print('')
+    fclient.push_flights(checked_list)
+
+
 
         # Obtained a list of unregistered flights that need to be added.
 
+        '''
         for cpc in checked_pcodes.keys():
             cpc_data = checked_pcodes[cpc]
 
@@ -60,13 +59,20 @@ def main(rootdir, outdir):
             # Write stac_record
             if IS_WRITE:
                 jsonWrite(outdir, cpc, stac_record)
+        '''
 
-        fclient.push_flights()
-    else:
-        print('No new flights detected - exiting')
 
 if __name__ == '__main__':
+
     try:
-        main('', sys.argv[1])
+        root = sys.argv[1]
     except IndexError:
         print('Error: No root or out dirs specified')
+        sys.exit()
+    try:
+        IS_FORCE = sys.argv[2] == '--overwrite'
+    except:
+        pass
+
+    main('', root)
+
