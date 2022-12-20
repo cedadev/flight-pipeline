@@ -6,8 +6,11 @@ Repository for python code to concatenate data sources and construct new flight 
   - Use ES Client to determine array of ids that currently exists in the index
   - Push new records
 
-## Run Pipeline
-Run with command `python flight_update.py <filedir>`, where __filedir__ is the path to a directory of jsons that follow the STAC template.
+## Push New Flights
+Run with command `python flight_update.py add <filedir>`, where __filedir__ is the path to a directory of jsons that follow the STAC template.
+
+## Update Existing Flights
+Run with command `python flight_update.py update <pyfile>`, where __pyfile__ is a python file containing an __update__ function that can be applied to each record in elasticsearch.
 
 ## STAC Template
 From the template, the following should be filled in:
