@@ -48,6 +48,29 @@ class ESFlightClient:
     def push_flights(self, file_list):
         bulk(self.es, self.action_iterator(file_list))
 
+    def obtain_field(self, id, fieldnames):
+        search = {
+            "_source": fieldnames,
+            "query": {
+                "bool":{
+                    "must":[{"term":{"id":i}} for i in id]
+                }
+            }
+        }
+
+        resp = self.es.search(
+            index=self.index,
+            body=search)
+
+        try:
+            return resp['hits']['hits'][0]
+        except IndexError: # No entry found
+            return None
+
+    def add_field(self, id, data, fieldname):
+        # Update mapping
+        self.es.update(index=self.index, doc_type='_doc', id=id, body={'doc':{fieldname:data}})
+
     def obtain_ids(self):
         aggs = {
             "size":0,
@@ -64,15 +87,14 @@ class ESFlightClient:
             index=self.index,
             body=aggs)
 
-        self.pcodes = {}
+        self.ptcodes = {}
         self.ys, self.yms, self.ymds = {},{},{}
         for bucket in resp['aggregations']['ids']['buckets']:
             ptcode = bucket['key']
-            pcode = ptcode.split('*')[0]
             yr = ptcode.split('*')[1].split('-')[0]
             mth = ptcode.split('*')[1].split('-')[1]
             day = ptcode.split('*')[1].split('-')[2]
-            self.pcodes[pcode] = 1
+            self.ptcodes[ptcode] = 1
             self.ys[yr] = 1
             self.yms[yr + '-' + mth] = 1
             self.ymds[yr + '-' + mth + '-' + day] = 1

@@ -5,12 +5,13 @@
   - Push new records
 '''
 from python_scripts.elastic_client import ESFlightClient
+import importlib
 
 import os, sys
 
 IS_FORCE = False
 
-def main(rootdir):
+def addFlights(rootdir):
 
     files_list = os.listdir(rootdir)
     checked_list = []
@@ -27,52 +28,73 @@ def main(rootdir):
         checked_list = list(files_list)
 
     # Push new flights to index
-    print('New flights: {}'.format(len(checked_list)),end='')
+    print('New flights: {}'.format(len(checked_list)), end='')
     if len(checked_list) != len(files_list):
         print('({} already exist)'.format(len(files_list) - len(checked_list)))
     else:
         print('')
     fclient.push_flights(checked_list)
 
+    # Obtained a list of unregistered flights that need to be added.
 
+    '''
+    for cpc in checked_pcodes.keys():
+        cpc_data = checked_pcodes[cpc]
 
-        # Obtained a list of unregistered flights that need to be added.
+        stac_record = dict(stac_template)
 
-        '''
-        for cpc in checked_pcodes.keys():
-            cpc_data = checked_pcodes[cpc]
+        # Start with Archive Meta Search
+        stac_record = ArchiveMeta(cpc_data).concatInfo(stac_record)
 
-            stac_record = dict(stac_template)
+        # Get Spatial/Temporal Info
+        l1b_data = ArchiveData(cpc_data)
 
-            # Start with Archive Meta Search
-            stac_record = ArchiveMeta(cpc_data).concatInfo(stac_record)
+        stac_record["geometry"]["display"] = l1b_data.getDisplay()
+        stac_record["properties"]["start_datetime"] = l1b_data.getStart()
+        stac_record["properties"]["end_datetime"] = l1b_data.getEnd()
 
-            # Get Spatial/Temporal Info
-            l1b_data = ArchiveData(cpc_data)
+        # send stac_record to fclient using 'yield'?
 
-            stac_record["geometry"]["display"] = l1b_data.getDisplay()
-            stac_record["properties"]["start_datetime"] = l1b_data.getStart()
-            stac_record["properties"]["end_datetime"] = l1b_data.getEnd()
+        # Write stac_record
+        if IS_WRITE:
+            jsonWrite(outdir, cpc, stac_record)
+    '''
 
-            # send stac_record to fclient using 'yield'?
+def updateFlights(update):
+    edit = importlib.import_module(update)
+    fclient = ESFlightClient('')
+    fclient.obtain_ids()
 
-            # Write stac_record
-            if IS_WRITE:
-                jsonWrite(outdir, cpc, stac_record)
-        '''
-
+    edit.update(fclient)
 
 if __name__ == '__main__':
 
+    # flight_update.py add <rootdir> --overwrite
+
     try:
-        root = sys.argv[1]
-    except IndexError:
-        print('Error: No root or out dirs specified')
+        mode = sys.argv[1]
+    except:
+        print('Error: No mode given (add or update)')
         sys.exit()
+
     try:
-        IS_FORCE = sys.argv[2] == '--overwrite'
+        IS_FORCE = sys.argv[3] == '--overwrite'
     except:
         pass
 
-    main('', root)
+    if mode == 'add':
+        try:
+            root = sys.argv[2]
+        except IndexError:
+            print('Error: No root or out dirs specified')
+            sys.exit()
+        addFlights(root)
+
+    elif mode == 'update':
+        try:
+            pyfile = sys.argv[2]
+        except IndexError:
+            print('Error: No update script specified')
+            sys.exit()
+        updateFlights(pyfile)
 
