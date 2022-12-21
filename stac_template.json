@@ -1,5 +1,6 @@
 {
     "id": "<flight_num/pcode>*2001-09-01",
+    "es_id": "randomstringofcharacters",
     "type" : "Feature",
     "stac_version": "1.0.0",
     "stac_extensions":[""],
@@ -19,6 +20,13 @@
                 ]
             ],
             "type": "MultiLineString"
+        },
+        "search":{
+            "type":"envelope",
+            "coordinates":[
+                [1,2],
+                [3,4]
+            ]
         }
     }
     ,

@@ -15,7 +15,7 @@ Run with command `python flight_update.py update <pyfile>`, where __pyfile__ is 
 ## STAC Template
 From the template, the following should be filled in:
  - id (fnum/pcode * date)
- - es_id (hash function for generating colours)
+ - es_id (random string of ASCII characters to generate one of 9 colours in flight finder)
  - description_path
  - collection
  - geometry.display.coordinates
