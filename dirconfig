@@ -1,0 +1,3 @@
+# Directory containing new flights to be pushed to Elasticsearch
+
+# Directory for moving written flights - write DELETE to remove pushed flight records from the local system after pushing.
