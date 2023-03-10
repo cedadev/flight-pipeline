@@ -47,7 +47,7 @@ class ESFlightClient:
     
     def push_flights(self, file_list):
         bulk(self.es, self.action_iterator(file_list))
-
+        
     def obtain_field(self, id, fieldnames):
         search = {
             "_source": fieldnames,
@@ -115,7 +115,21 @@ class ESFlightClient:
 
         # If all filters have passed
         return False
-            
+
+    def reindex(self, new_index):
+
+        self.es.reindex({
+            "source":{
+                "index":self.index
+            },
+            "dest":{
+                "index": new_index
+            }#, # Need to carry everything over except geometries.
+            #"script":{
+            #    "inline":"ctx._source.data.properties.geometry.remove('geometries')"
+            #}
+        })
+
 
 if __name__ == "__main__":
     print(__file__)

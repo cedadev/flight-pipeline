@@ -10,30 +10,72 @@ import importlib
 import os, sys
 
 IS_FORCE = False
+VERB = True
 
-def addFlights(rootdir):
+def openConfig():
+    if VERB:
+        print('> (1/6) Opening Config File')
+    f = open('dirconfig','r')
+    content = f.readlines()
+    f.close()
+    try:
+        return content[1].replace('\n',''), content[3].replace('\n','')
+    except IndexError:
+        print('Error: One or both paths missing from the dirconfig file - please fill these in')
+        return '',''
+
+def moveOldFiles(rootdir, archive, files):
+    # Move the written files from rootdir to the archive
+    if archive != 'DELETE':
+        for file in files:
+            path = os.path.join(rootdir, file.split('/')[-1])
+            new_path = os.path.join(archive, file.split('/')[-1])
+            os.system('mv {} {}'.format(path, new_path))
+    else:
+        for file in files:
+            path = os.path.join(rootdir, file.split('/')[-1])
+            os.system('rm {}'.format(path))
+
+
+def addFlights(rootdir, archive):
 
     files_list = os.listdir(rootdir)
     checked_list = []
 
     # ES client to determine array of ids
+    if VERB:
+        print('> (2/6) Setting up ES Flight Client')
     fclient = ESFlightClient(rootdir)
-    fclient.obtain_ids()
     if not IS_FORCE:
+        if VERB:
+            print('> (3/6) Obtaining existing IDs for comparison')
+        fclient.obtain_ids()
         for flight in files_list:
-            pcode = flight.split('*')[0]
-            if fclient.check_pcode(pcode):
+            if fclient.check_ptcode(flight):
                 checked_list.append(flight)
     else:
+        if VERB:
+            print('> (3/6) Obtaining Flight-Write list')
         checked_list = list(files_list)
 
     # Push new flights to index
-    print('New flights: {}'.format(len(checked_list)), end='')
-    if len(checked_list) != len(files_list):
-        print('({} already exist)'.format(len(files_list) - len(checked_list)))
+    if VERB:
+        print('> (4/6) Identified {} New flights to push'.format(len(checked_list)))
+    if len(checked_list) > 0:
+        fclient.push_flights(checked_list)
+        if VERB:
+            print('> (5/6) Pushed flights to ES Index')
+        moveOldFiles(rootdir, archive, checked_list)
+        if VERB:
+            print('> (6/6) Removed local files from push directory')
     else:
-        print('')
-    fclient.push_flights(checked_list)
+        if VERB:
+            print('> Exiting flight pipeline')
+
+    # Move old records into an archive directory
+
+
+    # Create Stac Records - if necessary
 
     # Obtained a list of unregistered flights that need to be added.
 
@@ -67,6 +109,10 @@ def updateFlights(update):
 
     edit.update(fclient)
 
+def reindex(new_index):
+    fclient = ESFlightClient('')
+    fclient.reindex(new_index)
+
 if __name__ == '__main__':
 
     # flight_update.py add <rootdir> --overwrite
@@ -78,17 +124,20 @@ if __name__ == '__main__':
         sys.exit()
 
     try:
-        IS_FORCE = sys.argv[3] == '--overwrite'
+        IS_FORCE = ('--overwrite' in sys.argv)
     except:
         pass
 
     if mode == 'add':
-        try:
-            root = sys.argv[2]
-        except IndexError:
-            print('Error: No root or out dirs specified')
+        root, archive = openConfig()
+        if archive == '':
+            print('Error: Please fill in second directory in dirconfig file')
             sys.exit()
-        addFlights(root)
+        elif root == '':
+            print('Error: Please fill in first directory in dirconfig file')
+            sys.exit()
+        else:
+            addFlights(root, archive)
 
     elif mode == 'update':
         try:
@@ -97,4 +146,15 @@ if __name__ == '__main__':
             print('Error: No update script specified')
             sys.exit()
         updateFlights(pyfile)
+
+    elif mode == 'reindex':
+        try:
+            new_index = sys.argv[2]
+        except IndexError:
+            print('Error: No new index specified')
+            sys.exit()
+        reindex(new_index)
+    else:
+        print('Error: Mode unrecognised - ', mode)
+        sys.exit()
 
