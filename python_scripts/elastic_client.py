@@ -16,7 +16,7 @@ class ESFlightClient:
     documents to elasticsearch."""
 
     connection_kwargs = {
-        "hosts": ["es9.ceda.ac.uk:9200"],
+        "hosts": ["https://elasticsearch.ceda.ac.uk/"],
         "headers": {
             "x-api-key":  "b0cc021feec53216cb470b36bec8786b10da4aa02d60edb91ade5aae43c07ee6",
         },

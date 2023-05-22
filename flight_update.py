@@ -115,7 +115,7 @@ def reindex(new_index):
 
 if __name__ == '__main__':
 
-    # flight_update.py add <rootdir> --overwrite
+    # flight_update.py add --overwrite
 
     try:
         mode = sys.argv[1]
