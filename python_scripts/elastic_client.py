@@ -16,23 +16,18 @@ class ESFlightClient:
     Connects to an elasticsearch instance and exports the
     documents to elasticsearch."""
 
-    connection_kwargs = {
-        "hosts": ["https://elasticsearch.ceda.ac.uk/"],
-        "headers": {
-            "x-api-key":  "b0cc021feec53216cb470b36bec8786b10da4aa02d60edb91ade5aae43c07ee6",
-        },
-        "use_ssl": True,
-        "verify_certs": False,
-        "ssl_show_warn": False,
-    }
+    f = open('settings.json','r')
+    connection_kwargs = json.load(f)
+    f.close()
+
     index = "stac-flightfinder-items"
 
     def __init__(self, rootdir):
         self.rootdir = rootdir
 
         self.es = Elasticsearch(**self.connection_kwargs)
-        #if not self.es.indices.exists(self.index):
-            #self.es.indices.create(self.index)
+        if not self.es.indices.exists(self.index):
+            self.es.indices.create(self.index)
 
     def bulk_iterator(self, file_list):
         for file in file_list:
