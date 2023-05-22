@@ -9,6 +9,7 @@ import os, sys
 import numpy as np
 
 from elasticsearch import Elasticsearch
+from elasticsearch.helpers import bulk
 
 class ESFlightClient:
     """
@@ -30,23 +31,32 @@ class ESFlightClient:
         self.rootdir = rootdir
 
         self.es = Elasticsearch(**self.connection_kwargs)
-        if not self.es.indices.exists(self.index):
-            self.es.indices.create(self.index)
+        #if not self.es.indices.exists(self.index):
+            #self.es.indices.create(self.index)
 
     def bulk_iterator(self, file_list):
         for file in file_list:
             with open(self.rootdir + '/' + file) as f:
                 con = json.load(f)
+                try:
+                    id = con["es_id"]
+                    source = con
+                except:
+                    try:
+                        id = con["_source"]["es_id"]
+                        source = con["_source"]
+                    except:
+                        return None
                 yield {
                     "_index":self.index,
                     "_type": "_doc",
-                    "_id":con["es_id"],
+                    "_id":id,
                     "_score":0.0,
-                    "_source":con
+                    "_source":source
                 }
     
     def push_flights(self, file_list):
-        bulk(self.es, self.action_iterator(file_list))
+        bulk(self.es, self.bulk_iterator(file_list))
         
     def obtain_field(self, id, fieldnames):
         search = {

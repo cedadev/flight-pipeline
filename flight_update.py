@@ -51,6 +51,7 @@ def addFlights(rootdir, archive):
             print('> (3/6) Obtaining existing IDs for comparison')
         fclient.obtain_ids()
         for flight in files_list:
+            ptcode = flight.replace('.json','')
             if fclient.check_ptcode(flight):
                 checked_list.append(flight)
     else:
