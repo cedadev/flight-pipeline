@@ -51,9 +51,12 @@ def addFlights(rootdir, archive):
             print('> (3/6) Obtaining existing IDs for comparison')
         fclient.obtain_ids()
         for flight in files_list:
-            ptcode = flight.replace('.json','')
-            if fclient.check_ptcode(flight):
-                checked_list.append(flight)
+            try:
+                ptcode = flight.replace('.json','')
+                if fclient.check_ptcode(flight):
+                    checked_list.append(flight)
+            except:
+                print('Flight Checking failed for', flight, '- ensure ptcode is in flight name')
     else:
         if VERB:
             print('> (3/6) Obtaining Flight-Write list')
@@ -66,7 +69,6 @@ def addFlights(rootdir, archive):
         fclient.push_flights(checked_list)
         if VERB:
             print('> (5/6) Pushed flights to ES Index')
-        moveOldFiles(rootdir, archive, checked_list)
         if VERB:
             print('> (6/6) Removed local files from push directory')
     else:
