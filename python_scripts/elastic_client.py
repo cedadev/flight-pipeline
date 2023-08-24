@@ -10,6 +10,7 @@ import numpy as np
 
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
+from .utils import genID
 
 class ESFlightClient:
     """
@@ -20,10 +21,14 @@ class ESFlightClient:
     connection_kwargs = json.load(f)
     f.close()
 
+
     index = "stac-flightfinder-items"
 
     def __init__(self, rootdir):
         self.rootdir = rootdir
+
+        with open('stac_template.json') as f:
+            self.required_keys = json.load(f).keys()
 
         self.es = Elasticsearch(**self.connection_kwargs)
         if not self.es.indices.exists(self.index):
@@ -33,6 +38,12 @@ class ESFlightClient:
         for file in file_list:
             with open(self.rootdir + '/' + file) as f:
                 con = json.load(f)
+                missing = []
+                for rq in self.required_keys:
+                    if rq not in con:
+                        missing.append(rq)
+                if len(missing) > 0:
+                    raise TypeError(f"File {file} is missing entries:{missing}")
                 try:
                     id = con["es_id"]
                     source = con
@@ -41,11 +52,12 @@ class ESFlightClient:
                         id = con["_source"]["es_id"]
                         source = con["_source"]
                     except:
-                        return None
+                        id = genID()
+                        source = con["_source"]
                 yield {
                     "_index":self.index,
                     "_type": "_doc",
-                    "_id":id,
+                    "_id": id,
                     "_score":0.0,
                     "_source":source
                 }
@@ -105,7 +117,6 @@ class ESFlightClient:
             self.ymds[yr + '-' + mth + '-' + day] = 1
 
     def check_ptcode(self, ptcode):
-        pcode = ptcode.split('*')[0]
         yr = ptcode.split('*')[1].split('-')[0]
         mth = ptcode.split('*')[1].split('-')[1]
         day = ptcode.split('*')[1].split('-')[2]
@@ -115,7 +126,7 @@ class ESFlightClient:
             return True
         if yr + '-' + mth + '-' + day not in self.ymds:
             return True
-        if pcode not in self.pcodes:
+        if ptcode not in self.ptcodes:
             return True
 
         # If all filters have passed

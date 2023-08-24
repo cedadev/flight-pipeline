@@ -66,3 +66,32 @@ def forceSearch(obj, maxs, mins, depth):
             [maxs, mins] = forceSearch(ob, maxs, mins, depth+1)
     return [maxs, mins]
             
+def genID():
+    import random
+    chars = [*'0123456789abcdefghijklmnopqrstuvwxyz']
+    id = ''
+    for i in range(39):
+        j = random.randint(0,len(chars))
+        id += chars[j]
+
+    os.system(f'grep {id} cache/id_history > cache/matches')
+    with open('cache/matches') as f:
+        content = f.readlines()
+        if len(content) > 0:
+            print("""
+CONGRATULATIONS!!! If you are reading this message you have just computed a flight index number
+that matches 39 out of the 40 characters of at least one other flight index number, the probability of which was
+                  1 in 4.9 x 10^60
+Meaning that unless you've broken the randomiser function you're extremely lucky today and should immediately go buy a lottery ticket!
+                  
+So lucky in fact that if you'd been running this program non-stop since the beginning of the universe on 10 billion computers, 
+generating a flight ID every nano second, the probability of what just occurred is about as likely as you winning the EuroMillions 
+                  lottery every day for 5 days
+                  """)
+            raise ValueError('Probabilty Factor Exceeds human tolerances, please rerun program')
+        else:
+            id += chars[random.randint(0, len(chars))]
+    with open('cache/id_history', 'a') as f:
+        f.write(id + '\n')
+    print(id)
+    return id
