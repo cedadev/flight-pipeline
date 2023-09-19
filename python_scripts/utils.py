@@ -71,11 +71,11 @@ def genID():
     chars = [*'0123456789abcdefghijklmnopqrstuvwxyz']
     id = ''
     for i in range(39):
-        j = random.randint(0,len(chars))
+        j = random.randint(0,len(chars)-1)
         id += chars[j]
 
-    os.system(f'grep {id} cache/id_history > cache/matches')
-    with open('cache/matches') as f:
+    os.system(f'grep {id} python_scripts/cache/id_history > python_scripts/cache/matches')
+    with open('python_scripts/cache/matches') as f:
         content = f.readlines()
         if len(content) > 0:
             print("""
@@ -91,7 +91,7 @@ generating a flight ID every nano second, the probability of what just occurred 
             raise ValueError('Probabilty Factor Exceeds human tolerances, please rerun program')
         else:
             id += chars[random.randint(0, len(chars))]
-    with open('cache/id_history', 'a') as f:
+    with open('python_scripts/cache/id_history', 'a') as f:
         f.write(id + '\n')
     print(id)
     return id

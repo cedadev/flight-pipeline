@@ -53,8 +53,13 @@ def addFlights(rootdir, archive):
         for flight in files_list:
             try:
                 ptcode = flight.replace('.json','')
-                if fclient.check_ptcode(flight):
+                status = fclient.check_ptcode(flight)
+                if status == 200:
                     checked_list.append(flight)
+                elif status == 300:
+                    print('Outdated filename convention, change * to __ in filename')
+                else:
+                    pass
             except:
                 print('Flight Checking failed for', flight, '- ensure ptcode is in flight name')
     else:
@@ -69,6 +74,7 @@ def addFlights(rootdir, archive):
         fclient.push_flights(checked_list)
         if VERB:
             print('> (5/6) Pushed flights to ES Index')
+        moveOldFiles(rootdir, archive, checked_list)
         if VERB:
             print('> (6/6) Removed local files from push directory')
     else:

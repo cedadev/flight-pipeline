@@ -63,6 +63,13 @@ class ESFlightClient:
                 }
     
     def push_flights(self, file_list):
+        for fname in file_list:
+            with open(f'../add_records/{fname}') as f:
+                refs = json.load(f)
+            if 'es_id' not in refs:
+                refs['es_id'] = genID()
+            with open(f'../add_records/{fname}','w') as f:
+                f.write(json.dumps(refs))
         bulk(self.es, self.bulk_iterator(file_list))
         
     def obtain_field(self, id, fieldnames):
@@ -117,20 +124,23 @@ class ESFlightClient:
             self.ymds[yr + '-' + mth + '-' + day] = 1
 
     def check_ptcode(self, ptcode):
-        yr = ptcode.split('*')[1].split('-')[0]
-        mth = ptcode.split('*')[1].split('-')[1]
-        day = ptcode.split('*')[1].split('-')[2]
+        if '*' in ptcode:
+            return 300
+        delim = '__'
+        yr = ptcode.split(delim)[1].split('-')[0]
+        mth = ptcode.split(delim)[1].split('-')[1]
+        day = ptcode.split(delim)[1].split('-')[2]
         if yr not in self.ys:
-            return True
+            return 200
         if yr + '-' + mth not in self.yms:
-            return True
+            return 200
         if yr + '-' + mth + '-' + day not in self.ymds:
-            return True
+            return 200
         if ptcode not in self.ptcodes:
-            return True
+            return 200
 
         # If all filters have passed
-        return False
+        return 100
 
     def reindex(self, new_index):
 
