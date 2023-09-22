@@ -35,15 +35,35 @@ class ESFlightClient:
             self.es.indices.create(self.index)
 
     def bulk_iterator(self, file_list):
+        
+        def set_defaults(refs):
+            collection = refs['_source']['collection']
+            flight_num = refs['_source']['properties']['flight_num']
+            pcode = refs['_source']['properties']['pcode'][0]
+            date = refs['_source']['properties']['pcode'][1]
+
+            con = refs['_source']
+
+            id = f'{collection}__{flight_num}__{pcode}__{date}.json'
+            con['id'] = id
+            con['type'] = 'Feature'
+            con['stac_version'] = '1.0.0'
+            con['stac_extensions'] = [""]
+            con['assets'] = {}
+            con['links'] = []
+            return con
+        
         for file in file_list:
             with open(self.rootdir + '/' + file) as f:
                 con = json.load(f)
+                con = set_defaults(con)
                 missing = []
                 for rq in self.required_keys:
                     if rq not in con:
                         missing.append(rq)
                 if len(missing) > 0:
                     raise TypeError(f"File {file} is missing entries:{missing}")
+                
                 try:
                     id = con["es_id"]
                     source = con
@@ -66,7 +86,7 @@ class ESFlightClient:
         for fname in file_list:
             with open(f'../add_records/{fname}') as f:
                 refs = json.load(f)
-            if 'es_id' not in refs:
+            if 'es_id' not in refs['_source'].keys():
                 refs['es_id'] = genID()
             with open(f'../add_records/{fname}','w') as f:
                 f.write(json.dumps(refs))
@@ -115,9 +135,16 @@ class ESFlightClient:
         self.ys, self.yms, self.ymds = {},{},{}
         for bucket in resp['aggregations']['ids']['buckets']:
             ptcode = bucket['key']
-            yr = ptcode.split('*')[1].split('-')[0]
-            mth = ptcode.split('*')[1].split('-')[1]
-            day = ptcode.split('*')[1].split('-')[2]
+            try:
+                yr = ptcode.split('*')[1].split('-')[0]
+                mth = ptcode.split('*')[1].split('-')[1]
+                day = ptcode.split('*')[1].split('-')[2]
+            except:
+                delim = '__'
+                date_index = 3
+                yr = ptcode.split(delim)[date_index].split('-')[0]
+                mth = ptcode.split(delim)[date_index].split('-')[1]
+                day = ptcode.split(delim)[date_index].split('-')[2]
             self.ptcodes[ptcode] = 1
             self.ys[yr] = 1
             self.yms[yr + '-' + mth] = 1
@@ -127,9 +154,10 @@ class ESFlightClient:
         if '*' in ptcode:
             return 300
         delim = '__'
-        yr = ptcode.split(delim)[1].split('-')[0]
-        mth = ptcode.split(delim)[1].split('-')[1]
-        day = ptcode.split(delim)[1].split('-')[2]
+        date_index = 3
+        yr = ptcode.split(delim)[date_index].split('-')[0]
+        mth = ptcode.split(delim)[date_index].split('-')[1]
+        day = ptcode.split(delim)[date_index].split('-')[2]
         if yr not in self.ys:
             return 200
         if yr + '-' + mth not in self.yms:
