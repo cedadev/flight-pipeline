@@ -12,6 +12,27 @@ from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
 from .utils import genID
 
+import re
+import requests
+
+import urllib3
+urllib3.disable_warnings()
+
+def resolve_link(path):
+    pattern = f'http://api.catalogue.ceda.ac.uk/api/v2/observations.json/?fields=uuid,result_field&result_field__dataPath={path}'
+    uuid = None
+    try:
+        resp = requests.get(pattern).text
+        r = json.loads(resp)
+        if r['results']:
+            uuid = r['results'][0]['uuid']
+        else:
+            print(f'Link not found for {path} - proceeding without')
+    except:
+        print(f'Unsuccessful link retrieval for {path} - proceeding without')
+
+    return uuid
+
 class ESFlightClient:
     """
     Connects to an elasticsearch instance and exports the
@@ -37,60 +58,70 @@ class ESFlightClient:
     def bulk_iterator(self, file_list):
         
         def set_defaults(refs):
-            collection = refs['_source']['collection']
-            flight_num = refs['_source']['properties']['flight_num']
-            pcode = refs['_source']['properties']['pcode'][0]
-            date = refs['_source']['properties']['pcode'][1]
+            collection = refs['collection']
+            flight_num = refs['properties']['flight_num']
+            pcode = refs['properties']['pcode'][0]
+            date = refs['properties']['pcode'][1]
 
-            con = refs['_source']
-
-            id = f'{collection}__{flight_num}__{pcode}__{date}.json'
-            con['id'] = id
-            con['type'] = 'Feature'
-            con['stac_version'] = '1.0.0'
-            con['stac_extensions'] = [""]
-            con['assets'] = {}
-            con['links'] = []
-            return con
-        
+            id = f'{collection}__{flight_num}__{pcode}__{date}'.replace(' ','')
+            refs['id'] = id
+            refs['type'] = 'Feature'
+            refs['stac_version'] = '1.0.0'
+            refs['stac_extensions'] = [""]
+            refs['assets'] = {}
+            refs['links'] = []
+            return refs
+        self.linked = 0
+        self.total = len(file_list)
         for file in file_list:
             with open(self.rootdir + '/' + file) as f:
-                con = json.load(f)
-                con = set_defaults(con)
-                missing = []
-                for rq in self.required_keys:
-                    if rq not in con:
-                        missing.append(rq)
-                if len(missing) > 0:
-                    raise TypeError(f"File {file} is missing entries:{missing}")
-                
-                try:
-                    id = con["es_id"]
-                    source = con
-                except:
-                    try:
-                        id = con["_source"]["es_id"]
-                        source = con["_source"]
-                    except:
-                        id = genID()
-                        source = con["_source"]
-                yield {
-                    "_index":self.index,
-                    "_type": "_doc",
-                    "_id": id,
-                    "_score":0.0,
-                    "_source":source
-                }
+                refs = json.load(f)
+            if '_source' in refs.keys():
+                id = refs['_id']
+                refs = refs['_source']
+                refs['es_id'] = id
+            refs = set_defaults(refs)
+
+            if 'es_id' in refs.keys():
+                if refs['es_id']:
+                    id = refs['es_id']
+                else:
+                    id = genID()
+                    refs['es_id'] = id
+            else:
+                id = genID()
+                refs['es_id'] = id
+
+            refs['catalogue_link'] = ''
+            link = resolve_link(refs['description_path'])
+            if link:
+                refs['catalogue_link'] = f'https://catalogue.ceda.ac.uk/uuid/{link}'
+                self.linked += 1
+            else:
+                del refs['catalogue_link']
+
+            missing = []
+            for rq in self.required_keys:
+                if rq not in refs:
+                    missing.append(rq)
+            if len(missing) > 0:
+                raise TypeError(f"File {file} is missing entries:{missing}")
+
+            recs = {
+                "_index":self.index,
+                "_type": "_doc",
+                "_id": id,
+                "_score":0.0,
+                "_source":refs
+            }  
+            with open(self.rootdir + '/' + file, 'w') as f:
+                f.write(json.dumps(recs))
+            
+            yield recs
     
     def push_flights(self, file_list):
-        for fname in file_list:
-            with open(f'../add_records/{fname}') as f:
-                refs = json.load(f)
-            if 'es_id' not in refs['_source'].keys():
-                refs['es_id'] = genID()
-            with open(f'../add_records/{fname}','w') as f:
-                f.write(json.dumps(refs))
         bulk(self.es, self.bulk_iterator(file_list))
+        print(f'Links: {self.linked}/{self.total}')
         
     def obtain_field(self, id, fieldnames):
         search = {
@@ -139,22 +170,56 @@ class ESFlightClient:
                 yr = ptcode.split('*')[1].split('-')[0]
                 mth = ptcode.split('*')[1].split('-')[1]
                 day = ptcode.split('*')[1].split('-')[2]
-            except:
-                delim = '__'
-                date_index = 3
-                yr = ptcode.split(delim)[date_index].split('-')[0]
-                mth = ptcode.split(delim)[date_index].split('-')[1]
-                day = ptcode.split(delim)[date_index].split('-')[2]
+            except IndexError:
+                try:
+                    delim = '__'
+                    date_index = 3
+                    yr = ptcode.split(delim)[date_index].split('-')[0]
+                    mth = ptcode.split(delim)[date_index].split('-')[1]
+                    day = ptcode.split(delim)[date_index].split('-')[2]
+                except IndexError:
+                    pass
             self.ptcodes[ptcode] = 1
             self.ys[yr] = 1
             self.yms[yr + '-' + mth] = 1
             self.ymds[yr + '-' + mth + '-' + day] = 1
+
+    def check_set(self, paths):
+        for x, p in enumerate(paths):
+            try:
+                pcode = re.search(f'[a-z]\d\d\d', p).group()# Replace with re.match at some point
+            except AttributeError:
+                continue
+            search = {
+                #"_source": fieldnames,
+                "query": {
+                    "bool":{
+                        "filter":{
+                            "bool":{
+                                "must":{"term":{"properties.flight_num":pcode}}
+                            }
+                        }
+                    }
+                }
+            }
+            resp = self.es.search(
+                index=self.index,
+                body=search)
+
+            if resp['hits']['total']['value'] > 0:
+                if 'coordinates' in resp['hits']['hits'][0]['geometry']['display']:
+                    print(f'{x+1}. {pcode} appears to have coordinates')
+                else:
+                    print(f'{x+1}. {pcode} appears to not have coordinates')
+            else:
+                print(f'{x+1}. {pcode} does not have an entry')
 
     def check_ptcode(self, ptcode):
         if '*' in ptcode:
             return 300
         delim = '__'
         date_index = 3
+        print(ptcode)
         yr = ptcode.split(delim)[date_index].split('-')[0]
         mth = ptcode.split(delim)[date_index].split('-')[1]
         day = ptcode.split(delim)[date_index].split('-')[2]
