@@ -9,7 +9,7 @@ import importlib
 
 import os, sys
 
-IS_FORCE = False
+IS_FORCE = True
 VERB = True
 
 def openConfig():
@@ -37,31 +37,36 @@ def moveOldFiles(rootdir, archive, files):
             os.system('rm {}'.format(path))
 
 
-def addFlights(rootdir, archive):
+def addFlights(rootdir, archive, repush=False):
 
-    files_list = os.listdir(rootdir)
     checked_list = []
 
     # ES client to determine array of ids
     if VERB:
         print('> (2/6) Setting up ES Flight Client')
-    fclient = ESFlightClient(rootdir)
+    if repush:
+        files_list = os.listdir(archive)
+        fclient = ESFlightClient(archive)
+    else:
+        files_list = os.listdir(rootdir)
+        fclient = ESFlightClient(rootdir)
     if not IS_FORCE:
         if VERB:
             print('> (3/6) Obtaining existing IDs for comparison')
         fclient.obtain_ids()
         for flight in files_list:
-            try:
+            if True:
                 ptcode = flight.replace('.json','')
                 status = fclient.check_ptcode(flight)
+                status = 200
                 if status == 200:
                     checked_list.append(flight)
                 elif status == 300:
                     print('Outdated filename convention, change * to __ in filename')
                 else:
                     pass
-            except:
-                print('Flight Checking failed for', flight, '- ensure ptcode is in flight name')
+            #except:
+                #print('Flight Checking failed for', flight, '- ensure ptcode is in flight name')
     else:
         if VERB:
             print('> (3/6) Obtaining Flight-Write list')
@@ -74,7 +79,8 @@ def addFlights(rootdir, archive):
         fclient.push_flights(checked_list)
         if VERB:
             print('> (5/6) Pushed flights to ES Index')
-        moveOldFiles(rootdir, archive, checked_list)
+        if not repush:
+            moveOldFiles(rootdir, archive, checked_list)
         if VERB:
             print('> (6/6) Removed local files from push directory')
     else:
@@ -137,6 +143,11 @@ if __name__ == '__main__':
     except:
         pass
 
+    try:
+        REPUSH = ('--repush' in sys.argv)
+    except:
+        REPUSH = False
+
     if mode == 'add':
         root, archive = openConfig()
         if archive == '':
@@ -146,7 +157,14 @@ if __name__ == '__main__':
             print('Error: Please fill in first directory in dirconfig file')
             sys.exit()
         else:
-            addFlights(root, archive)
+            addFlights(root, archive, repush=REPUSH)
+
+    elif mode == 'retrieve':
+        rootdir, archive = openConfig()
+        fclient = ESFlightClient(rootdir)
+        with open('check_paths.txt') as f:
+            check_paths = [r.strip() for r in f.readlines()]
+        fclient.check_set(check_paths)
 
     elif mode == 'update':
         try:
