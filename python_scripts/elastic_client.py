@@ -142,6 +142,23 @@ class ESFlightClient:
         except IndexError: # No entry found
             return None
 
+    def obtain_records(self):
+        search = {
+            "size":10000,
+            "query": {
+                "match_all":{}
+            }
+        }
+
+        resp = self.es.search(
+            index=self.index,
+            body=search)
+
+        try:
+            return resp['hits']['hits']
+        except IndexError: # No entry found
+            return None
+
     def add_field(self, id, data, fieldname):
         # Update mapping
         self.es.update(index=self.index, doc_type='_doc', id=id, body={'doc':{fieldname:data}})
