@@ -1,7 +1,7 @@
 # flight-pipeline
 Repository for python code to concatenate data sources and construct new flight records for CEDA flight-finder
 
-## Objectives:
+## Objectives: 
   - Mechanism for uploading new flights to stac index
   - Use ES Client to determine array of ids that currently exists in the index
   - Push new records that are not currently in the index
