@@ -12,36 +12,29 @@ def update_moles(client, thorough=False, cache=True):
 
     attempted = {}
 
-    if False:
-        records = client.obtain_ids()
+    records = client.obtain_ids()
 
-        for x, r in enumerate(records):
-            new_link = None
-            if thorough or 'catalogue_link' not in r['_source']:
-                dpath = r['_source']['description_path']
-                if dpath not in attempted:
-                    print(dpath)
-                    new_link = resolve_link(r['_source']['description_path'])
-                    attempted[dpath] = new_link
-                else:
-                    new_link = attempted[dpath]
-
-            if new_link:
-                updated_link += 1
-                r['_source']['catalogue_link'] = f'https://catalogue.ceda.ac.uk/uuid/{new_link}'
-                push_records.append(r['_source'])
-                # Cache new record
-                if cache:
-                    with open(f'{x}.json','w') as f:
-                        f.write(json.dumps(r))
+    for x, r in enumerate(records):
+        new_link = None
+        if thorough or 'catalogue_link' not in r['_source']:
+            dpath = r['_source']['description_path']
+            if dpath not in attempted:
+                print(dpath)
+                new_link = resolve_link(r['_source']['description_path'])
+                attempted[dpath] = new_link
             else:
-                stable += 1
-        
-    if True:
-        with open('1624.json') as f:
-            r = json.load(f)
-        push_records = [r]
-        updated_link = 1
+                new_link = attempted[dpath]
+
+        if new_link:
+            updated_link += 1
+            r['_source']['catalogue_link'] = f'https://catalogue.ceda.ac.uk/uuid/{new_link}'
+            push_records.append(r['_source'])
+            # Cache new record
+            if cache:
+                with open(f'localcache/{x}.json','w') as f:
+                    f.write(json.dumps(r))
+        else:
+            stable += 1
 
     print(f'Links updated: {updated_link}, Stable: {stable}')
     if updated_link > 0:
