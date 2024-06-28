@@ -4,13 +4,17 @@
   - Use ES Client to determine array of ids that currently exists in the index
   - Push new records
 '''
-from python_scripts.elastic_client import ESFlightClient
+from flightpipe.elastic_client import ESFlightClient
 import importlib
+
+import argparse
 
 import os, sys
 
 IS_FORCE = True
 VERB = True
+
+settings_file = 'settings.json'
 
 def openConfig():
     if VERB:
@@ -46,35 +50,17 @@ def addFlights(rootdir, archive, repush=False):
         print('> (2/6) Setting up ES Flight Client')
     if repush:
         files_list = os.listdir(archive)
-        fclient = ESFlightClient(archive)
+        fclient = ESFlightClient(archive, settings_file)
     else:
         files_list = os.listdir(rootdir)
-        fclient = ESFlightClient(rootdir)
-    if not IS_FORCE:
-        if VERB:
-            print('> (3/6) Obtaining existing IDs for comparison')
-        fclient.obtain_ids()
-        for flight in files_list:
-            if True:
-                ptcode = flight.replace('.json','')
-                status = fclient.check_ptcode(flight)
-                status = 200
-                if status == 200:
-                    checked_list.append(flight)
-                elif status == 300:
-                    print('Outdated filename convention, change * to __ in filename')
-                else:
-                    pass
-            #except:
-                #print('Flight Checking failed for', flight, '- ensure ptcode is in flight name')
-    else:
-        if VERB:
-            print('> (3/6) Obtaining Flight-Write list')
-        checked_list = list(files_list)
+        fclient = ESFlightClient(rootdir, settings_file)
+
+    # All flights ok to repush - handled by new client.
+    checked_list = list(files_list)
 
     # Push new flights to index
     if VERB:
-        print('> (4/6) Identified {} New flights to push'.format(len(checked_list)))
+        print('> (4/6) Identified {} flights'.format(len(checked_list)))
     if len(checked_list) > 0:
         fclient.push_flights(checked_list)
         if VERB:
@@ -89,66 +75,323 @@ def addFlights(rootdir, archive, repush=False):
 
     # Move old records into an archive directory
 
-
-    # Create Stac Records - if necessary
-
-    # Obtained a list of unregistered flights that need to be added.
-
-    '''
-    for cpc in checked_pcodes.keys():
-        cpc_data = checked_pcodes[cpc]
-
-        stac_record = dict(stac_template)
-
-        # Start with Archive Meta Search
-        stac_record = ArchiveMeta(cpc_data).concatInfo(stac_record)
-
-        # Get Spatial/Temporal Info
-        l1b_data = ArchiveData(cpc_data)
-
-        stac_record["geometry"]["display"] = l1b_data.getDisplay()
-        stac_record["properties"]["start_datetime"] = l1b_data.getStart()
-        stac_record["properties"]["end_datetime"] = l1b_data.getEnd()
-
-        # send stac_record to fclient using 'yield'?
-
-        # Write stac_record
-        if IS_WRITE:
-            jsonWrite(outdir, cpc, stac_record)
-    '''
-
 def updateFlights(update):
-    edit = importlib.import_module(update)
-    fclient = ESFlightClient('')
-    fclient.obtain_ids()
+    from flightpipe import updaters
+    fclient = ESFlightClient('', settings_file)
+    updaters[update](fclient)
 
-    edit.update(fclient)
+test = {
+        "description_path": "/neodc/arsf/2002/00_02",
+        "es_id": "092cc8760ca44d66e9534b50cda977d95290f205",
+        "geometry": {
+            "display": {
+                "coordinates": [
+                    [
+                        [
+                            -4.017899,
+                            57.0826952
+                        ],
+                        [
+                            -4.0150244,
+                            57.0837034
+                        ],
+                        [
+                            -4.012297,
+                            57.0847855
+                        ],
+                        [
+                            -4.0096279,
+                            57.0858878
+                        ],
+                        [
+                            -4.006985,
+                            57.0870138
+                        ],
+                        [
+                            -4.0042917,
+                            57.0881457
+                        ],
+                        [
+                            -4.0015045,
+                            57.0892878
+                        ],
+                        [
+                            -3.9986163,
+                            57.090438
+                        ],
+                        [
+                            -3.9956629,
+                            57.091604
+                        ],
+                        [
+                            -3.9926722,
+                            57.0927883
+                        ],
+                        [
+                            -3.989661,
+                            57.0939946
+                        ],
+                        [
+                            -3.9866696,
+                            57.0952401
+                        ],
+                        [
+                            -3.9837207,
+                            57.0965217
+                        ],
+                        [
+                            -3.9808004,
+                            57.0978144
+                        ],
+                        [
+                            -3.977886,
+                            57.0991014
+                        ],
+                        [
+                            -3.9749585,
+                            57.1003744
+                        ],
+                        [
+                            -3.9720213,
+                            57.1016408
+                        ],
+                        [
+                            -3.9690777,
+                            57.1029012
+                        ],
+                        [
+                            -3.9661268,
+                            57.1041472
+                        ],
+                        [
+                            -3.9631829,
+                            57.105386
+                        ],
+                        [
+                            -3.9602733,
+                            57.1066231
+                        ],
+                        [
+                            -3.9574227,
+                            57.1078601
+                        ],
+                        [
+                            -3.9546271,
+                            57.1090948
+                        ],
+                        [
+                            -3.9518687,
+                            57.1103243
+                        ],
+                        [
+                            -3.9491303,
+                            57.1115448
+                        ],
+                        [
+                            -3.9464064,
+                            57.1127557
+                        ],
+                        [
+                            -3.9436777,
+                            57.1139549
+                        ],
+                        [
+                            -3.9409397,
+                            57.1151498
+                        ],
+                        [
+                            -3.9381834,
+                            57.1163379
+                        ],
+                        [
+                            -3.9354131,
+                            57.1175255
+                        ]
+                    ],
+                    [
+                        [
+                            -3.9184596,
+                            57.1119002
+                        ],
+                        [
+                            -3.9215371,
+                            57.1105882
+                        ],
+                        [
+                            -3.9246265,
+                            57.1092483
+                        ],
+                        [
+                            -3.9277538,
+                            57.1078754
+                        ],
+                        [
+                            -3.9309346,
+                            57.1064816
+                        ],
+                        [
+                            -3.9341952,
+                            57.1051065
+                        ],
+                        [
+                            -3.9374816,
+                            57.1037509
+                        ],
+                        [
+                            -3.9407347,
+                            57.1024099
+                        ],
+                        [
+                            -3.943958,
+                            57.1011103
+                        ],
+                        [
+                            -3.9471453,
+                            57.0998469
+                        ],
+                        [
+                            -3.9503185,
+                            57.0986016
+                        ],
+                        [
+                            -3.9535027,
+                            57.0973635
+                        ],
+                        [
+                            -3.9566927,
+                            57.0961132
+                        ],
+                        [
+                            -3.9598828,
+                            57.0948314
+                        ],
+                        [
+                            -3.9630611,
+                            57.0934964
+                        ],
+                        [
+                            -3.9662202,
+                            57.0920978
+                        ],
+                        [
+                            -3.9693962,
+                            57.0906691
+                        ],
+                        [
+                            -3.9725742,
+                            57.0892365
+                        ],
+                        [
+                            -3.975768,
+                            57.0878343
+                        ],
+                        [
+                            -3.9789704,
+                            57.0864636
+                        ],
+                        [
+                            -3.9821743,
+                            57.0851281
+                        ],
+                        [
+                            -3.9853524,
+                            57.0838198
+                        ],
+                        [
+                            -3.9885065,
+                            57.0825387
+                        ],
+                        [
+                            -3.9916442,
+                            57.0812745
+                        ],
+                        [
+                            -3.9948191,
+                            57.080023
+                        ],
+                        [
+                            -3.9980353,
+                            57.0787722
+                        ],
+                        [
+                            -4.0012414,
+                            57.0774806
+                        ],
+                        [
+                            -4.0044159,
+                            57.0761358
+                        ],
+                        [
+                            -4.0075062,
+                            57.0747138
+                        ],
+                        [
+                            -4.0103984,
+                            57.0731602
+                        ]
+                    ]
+                ],
+                "type": "MultiLineString"
+            }
+        },
+        "collection": "arsf",
+        "properties": {
+            "data_format": "HDF4",
+            "flight_num": "00_02",
+            "altitude": "",
+            "variables": [
+                "ATM 0.42-13.5mm"
+            ],
+            "principle": "",
+            "instruments": [],
+            "start_datetime": "2002-09-01T09:00:26",
+            "end_datetime": "2002-09-01T09:08:38",
+            "pcode": [
+                "00_02",
+                "2002-09-01"
+            ],
+            "aircraft": "",
+            "location": [
+                "Insh Marshes"
+            ],
+            "platform": ""
+        },
+        "id": "arsf__00_02__00_02__2002-09-01",
+        "type": "Feature",
+        "stac_version": "1.0.0",
+        "stac_extensions": [
+            ""
+        ],
+        "assets": {},
+        "links": []
+}
+
+def special():
+    import json
+    fclient = ESFlightClient('', settings_file)
+    fclient.add_records([test])
 
 def reindex(new_index):
-    fclient = ESFlightClient('')
+    fclient = ESFlightClient('', settings_file)
     fclient.reindex(new_index)
 
 if __name__ == '__main__':
 
     # flight_update.py add --overwrite
 
-    try:
-        mode = sys.argv[1]
-    except:
-        print('Error: No mode given (add or update)')
-        sys.exit()
+    parser = argparse.ArgumentParser(description='Run the flight pipeline to push or update flights')
+    parser.add_argument('mode',    type=str, help='Mode to run for the pipeline (add/update/reindex)')
 
-    try:
-        IS_FORCE = ('--overwrite' in sys.argv)
-    except:
-        pass
+    parser.add_argument('--update', dest='update', type=str, help='Name of script in updates/ to use.')
+    parser.add_argument('--new-index', dest='new_index', type=str, help='New elasticsearch index to move to.')
 
-    try:
-        REPUSH = ('--repush' in sys.argv)
-    except:
-        REPUSH = False
 
-    if mode == 'add':
+    args = parser.parse_args()
+
+    IS_FORCE = False
+    REPUSH = False
+
+    if args.mode == 'add':
         root, archive = openConfig()
         if archive == '':
             print('Error: Please fill in second directory in dirconfig file')
@@ -159,29 +402,24 @@ if __name__ == '__main__':
         else:
             addFlights(root, archive, repush=REPUSH)
 
-    elif mode == 'retrieve':
-        rootdir, archive = openConfig()
-        fclient = ESFlightClient(rootdir)
-        with open('check_paths.txt') as f:
-            check_paths = [r.strip() for r in f.readlines()]
-        fclient.check_set(check_paths)
+        """
+        elif args.mode == 'retrieve':
+            rootdir, archive = openConfig()
+            fclient = ESFlightClient(rootdir)
+            with open('check_paths.txt') as f:
+                check_paths = [r.strip() for r in f.readlines()]
+            fclient.check_set(check_paths)
+        """
 
-    elif mode == 'update':
-        try:
-            pyfile = sys.argv[2]
-        except IndexError:
-            print('Error: No update script specified')
-            sys.exit()
-        updateFlights(pyfile)
+    elif args.mode == 'update':
+        updateFlights(args.update)
 
-    elif mode == 'reindex':
-        try:
-            new_index = sys.argv[2]
-        except IndexError:
-            print('Error: No new index specified')
-            sys.exit()
-        reindex(new_index)
+    elif args.mode == 'special':
+        special()
+
+    elif args.mode == 'reindex':
+        reindex(args.new_index)
     else:
-        print('Error: Mode unrecognised - ', mode)
+        print('Error: Mode unrecognised - ', args.mode)
         sys.exit()
 
