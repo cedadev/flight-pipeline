@@ -4,7 +4,7 @@
   - Copied from elastic_scrapers/scraper_code
 '''
 
-from utils import jsonWrite
+from flightpipe.utils import jsonWrite
 
 def addList(item,id):
     buffer = []

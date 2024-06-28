@@ -10,7 +10,9 @@ import numpy as np
 
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
-from .utils import genID
+from flightpipe.utils import genID
+
+from datetime import datetime
 
 import re
 import requests
@@ -18,44 +20,49 @@ import requests
 import urllib3
 urllib3.disable_warnings()
 
-def resolve_link(path):
-    pattern = f'http://api.catalogue.ceda.ac.uk/api/v2/observations.json/?fields=uuid,result_field&result_field__dataPath={path}'
+def resolve_link(path, ):
+    mpath = str(path)
+
     uuid = None
-    try:
-        resp = requests.get(pattern).text
-        r = json.loads(resp)
-        if r['results']:
-            uuid = r['results'][0]['uuid']
-        else:
-            print(f'Link not found for {path} - proceeding without')
-    except:
-        print(f'Unsuccessful link retrieval for {path} - proceeding without')
+    while len(path.split('/')) > 3 and not uuid:
+        pattern = f'http://api.catalogue.ceda.ac.uk/api/v2/observations.json/?fields=uuid,result_field&result_field__dataPath={path}'
+        try:
+            resp = requests.get(pattern).text
+            r = json.loads(resp)
+            if r['results']:
+                uuid = r['results'][0]['uuid']
+        except:
+            print(f'Unsuccessful link retrieval for {path} - proceeding without')
+        path = '/'.join(path.split('/')[:-1])
+
+    if not uuid:
+        print(f'Recursive path search failed for: {mpath}')
 
     return uuid
 
-class ESFlightClient:
+class ESFlightClient():
     """
     Connects to an elasticsearch instance and exports the
     documents to elasticsearch."""
 
-    f = open('settings.json','r')
-    connection_kwargs = json.load(f)
-    f.close()
-
-
-    index = "stac-flightfinder-items"
-
-    def __init__(self, rootdir):
+    def __init__(self, rootdir, es_config):
         self.rootdir = rootdir
+
+        self.index = "stac-flightfinder-items"
+        fieldmatch = "id"
+
+        if isinstance(es_config,str):
+            with open(es_config) as f:
+                connection_kwargs = json.load(f)
+        else:
+            connection_kwargs = es_config
 
         with open('stac_template.json') as f:
             self.required_keys = json.load(f).keys()
 
-        self.es = Elasticsearch(**self.connection_kwargs)
-        if not self.es.indices.exists(self.index):
-            self.es.indices.create(self.index)
+        self.es = Elasticsearch(**connection_kwargs)
 
-    def bulk_iterator(self, file_list):
+    def push_flights(self, file_list):
         
         def set_defaults(refs):
             collection = refs['collection']
@@ -71,58 +78,51 @@ class ESFlightClient:
             refs['assets'] = {}
             refs['links'] = []
             return refs
+
         self.linked = 0
         self.total = len(file_list)
-        for file in file_list:
-            with open(self.rootdir + '/' + file) as f:
-                refs = json.load(f)
+        for refs in file_list:
             if '_source' in refs.keys():
                 id = refs['_id']
-                refs = refs['_source']
-                refs['es_id'] = id
-            refs = set_defaults(refs)
+                source = refs['_source']
+                source['es_id'] = id
+            source = set_defaults(source)
 
-            if 'es_id' in refs.keys():
-                if refs['es_id']:
-                    id = refs['es_id']
+            if 'es_id' in source.keys():
+                if source['es_id']:
+                    id = source['es_id']
                 else:
                     id = genID()
-                    refs['es_id'] = id
+                    source['es_id'] = id
             else:
                 id = genID()
-                refs['es_id'] = id
+                source['es_id'] = id
 
-            refs['catalogue_link'] = ''
-            link = resolve_link(refs['description_path'])
+            source['catalogue_link'] = ''
+            link = resolve_link(source['description_path'])
             if link:
-                refs['catalogue_link'] = f'https://catalogue.ceda.ac.uk/uuid/{link}'
+                source['catalogue_link'] = f'https://catalogue.ceda.ac.uk/uuid/{link}'
                 self.linked += 1
             else:
-                del refs['catalogue_link']
+                del source['catalogue_link']
 
             missing = []
             for rq in self.required_keys:
-                if rq not in refs:
+                if rq not in source:
                     missing.append(rq)
             if len(missing) > 0:
                 raise TypeError(f"File {file} is missing entries:{missing}")
 
-            recs = {
-                "_index":self.index,
-                "_type": "_doc",
-                "_id": id,
-                "_score":0.0,
-                "_source":refs
-            }  
-            with open(self.rootdir + '/' + file, 'w') as f:
-                f.write(json.dumps(recs))
-            
-            yield recs
-    
-    def push_flights(self, file_list):
-        bulk(self.es, self.bulk_iterator(file_list))
-        print(f'Links: {self.linked}/{self.total}')
+            source['last_update'] = datetime.strftime(datetime.now(),'%Y-%m-%d %H:%M:%S')
+
+            refs['_source'] = source
+
+            yield refs
         
+    def bulk_push(self, flights):
+        print('Creating bulk push')
+        bulk(self.es, self.push_flights(flights))
+
     def obtain_field(self, id, fieldnames):
         search = {
             "_source": fieldnames,
@@ -164,25 +164,28 @@ class ESFlightClient:
         self.es.update(index=self.index, doc_type='_doc', id=id, body={'doc':{fieldname:data}})
 
     def obtain_ids(self):
-        aggs = {
-            "size":0,
-            "aggs":{
-                "ids":{
-                    "terms":{
-                        "field":"id.keyword",
-                        "size":10000
-                    }
-                }
+        search = {
+            "size":10000,
+            "query": {
+                "match_all":{}
             }
         }
+
         resp = self.es.search(
             index=self.index,
-            body=aggs)
+            body=search)
+        
+        return resp['hits']['hits']
+
+    def sort_codes(self):
+
+        ids = [i['_source']['id'] for i in self.obtain_ids()]
 
         self.ptcodes = {}
         self.ys, self.yms, self.ymds = {},{},{}
-        for bucket in resp['aggregations']['ids']['buckets']:
-            ptcode = bucket['key']
+
+        for ptcode in ids:
+
             try:
                 yr = ptcode.split('*')[1].split('-')[0]
                 mth = ptcode.split('*')[1].split('-')[1]

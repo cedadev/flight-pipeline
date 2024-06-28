@@ -4,13 +4,17 @@
   - Use ES Client to determine array of ids that currently exists in the index
   - Push new records
 '''
-from python_scripts.elastic_client import ESFlightClient
+from flightpipe.elastic_client import ESFlightClient
 import importlib
+
+import argparse
 
 import os, sys
 
 IS_FORCE = True
 VERB = True
+
+settings_file = 'settings.json'
 
 def openConfig():
     if VERB:
@@ -46,35 +50,17 @@ def addFlights(rootdir, archive, repush=False):
         print('> (2/6) Setting up ES Flight Client')
     if repush:
         files_list = os.listdir(archive)
-        fclient = ESFlightClient(archive)
+        fclient = ESFlightClient(archive, settings_file)
     else:
         files_list = os.listdir(rootdir)
-        fclient = ESFlightClient(rootdir)
-    if not IS_FORCE:
-        if VERB:
-            print('> (3/6) Obtaining existing IDs for comparison')
-        fclient.obtain_ids()
-        for flight in files_list:
-            if True:
-                ptcode = flight.replace('.json','')
-                status = fclient.check_ptcode(flight)
-                status = 200
-                if status == 200:
-                    checked_list.append(flight)
-                elif status == 300:
-                    print('Outdated filename convention, change * to __ in filename')
-                else:
-                    pass
-            #except:
-                #print('Flight Checking failed for', flight, '- ensure ptcode is in flight name')
-    else:
-        if VERB:
-            print('> (3/6) Obtaining Flight-Write list')
-        checked_list = list(files_list)
+        fclient = ESFlightClient(rootdir, settings_file)
+
+    # All flights ok to repush - handled by new client.
+    checked_list = list(files_list)
 
     # Push new flights to index
     if VERB:
-        print('> (4/6) Identified {} New flights to push'.format(len(checked_list)))
+        print('> (4/6) Identified {} flights'.format(len(checked_list)))
     if len(checked_list) > 0:
         fclient.push_flights(checked_list)
         if VERB:
@@ -89,66 +75,32 @@ def addFlights(rootdir, archive, repush=False):
 
     # Move old records into an archive directory
 
-
-    # Create Stac Records - if necessary
-
-    # Obtained a list of unregistered flights that need to be added.
-
-    '''
-    for cpc in checked_pcodes.keys():
-        cpc_data = checked_pcodes[cpc]
-
-        stac_record = dict(stac_template)
-
-        # Start with Archive Meta Search
-        stac_record = ArchiveMeta(cpc_data).concatInfo(stac_record)
-
-        # Get Spatial/Temporal Info
-        l1b_data = ArchiveData(cpc_data)
-
-        stac_record["geometry"]["display"] = l1b_data.getDisplay()
-        stac_record["properties"]["start_datetime"] = l1b_data.getStart()
-        stac_record["properties"]["end_datetime"] = l1b_data.getEnd()
-
-        # send stac_record to fclient using 'yield'?
-
-        # Write stac_record
-        if IS_WRITE:
-            jsonWrite(outdir, cpc, stac_record)
-    '''
-
 def updateFlights(update):
-    edit = importlib.import_module(update)
-    fclient = ESFlightClient('')
-    fclient.obtain_ids()
-
-    edit.update(fclient)
+    from flightpipe import updaters
+    fclient = ESFlightClient('', settings_file)
+    updaters[update](fclient)
 
 def reindex(new_index):
-    fclient = ESFlightClient('')
+    fclient = ESFlightClient('', settings_file)
     fclient.reindex(new_index)
 
 if __name__ == '__main__':
 
     # flight_update.py add --overwrite
 
-    try:
-        mode = sys.argv[1]
-    except:
-        print('Error: No mode given (add or update)')
-        sys.exit()
+    parser = argparse.ArgumentParser(description='Run the flight pipeline to push or update flights')
+    parser.add_argument('mode',    type=str, help='Mode to run for the pipeline (add/update/reindex)')
 
-    try:
-        IS_FORCE = ('--overwrite' in sys.argv)
-    except:
-        pass
+    parser.add_argument('--update', dest='update', type=str, help='Name of script in updates/ to use.')
+    parser.add_argument('--new-index', dest='new_index', type=str, help='New elasticsearch index to move to.')
 
-    try:
-        REPUSH = ('--repush' in sys.argv)
-    except:
-        REPUSH = False
 
-    if mode == 'add':
+    args = parser.parse_args()
+
+    IS_FORCE = False
+    REPUSH = False
+
+    if args.mode == 'add':
         root, archive = openConfig()
         if archive == '':
             print('Error: Please fill in second directory in dirconfig file')
@@ -159,29 +111,24 @@ if __name__ == '__main__':
         else:
             addFlights(root, archive, repush=REPUSH)
 
-    elif mode == 'retrieve':
-        rootdir, archive = openConfig()
-        fclient = ESFlightClient(rootdir)
-        with open('check_paths.txt') as f:
-            check_paths = [r.strip() for r in f.readlines()]
-        fclient.check_set(check_paths)
+        """
+        elif args.mode == 'retrieve':
+            rootdir, archive = openConfig()
+            fclient = ESFlightClient(rootdir)
+            with open('check_paths.txt') as f:
+                check_paths = [r.strip() for r in f.readlines()]
+            fclient.check_set(check_paths)
+        """
 
-    elif mode == 'update':
-        try:
-            pyfile = sys.argv[2]
-        except IndexError:
-            print('Error: No update script specified')
-            sys.exit()
-        updateFlights(pyfile)
+    elif args.mode == 'update':
+        updateFlights(args.update)
 
-    elif mode == 'reindex':
-        try:
-            new_index = sys.argv[2]
-        except IndexError:
-            print('Error: No new index specified')
-            sys.exit()
-        reindex(new_index)
+    elif args.mode == 'add_moles':
+        updateFlights('moles')
+
+    elif args.mode == 'reindex':
+        reindex(args.new_index)
     else:
-        print('Error: Mode unrecognised - ', mode)
+        print('Error: Mode unrecognised - ', args.mode)
         sys.exit()
 
