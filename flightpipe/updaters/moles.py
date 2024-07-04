@@ -1,4 +1,4 @@
-from flightpipe.elastic_client import resolve_link
+from flightpipe.flight_client import resolve_link
 import json
 
 def update_moles(client, thorough=False, cache=True):

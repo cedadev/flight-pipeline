@@ -4,7 +4,7 @@
   - Use ES Client to determine array of ids that currently exists in the index
   - Push new records
 '''
-from flightpipe.elastic_client import ESFlightClient
+from flightpipe.flight_client import ESFlightClient
 import importlib
 
 import argparse

@@ -10,7 +10,8 @@ import numpy as np
 
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
-from flightpipe.utils import genID
+
+from ceda_elastic_py import SimpleClient, gen_id
 
 from datetime import datetime
 
@@ -40,29 +41,32 @@ def resolve_link(path, ):
 
     return uuid
 
-class ESFlightClient():
+class ESFlightClient(SimpleClient):
     """
     Connects to an elasticsearch instance and exports the
     documents to elasticsearch."""
 
-    def __init__(self, rootdir, es_config):
+    def __init__(self, rootdir, es_config='settings.json'):
         self.rootdir = rootdir
 
-        self.index = "stac-flightfinder-items"
-        fieldmatch = "id"
-
-        if isinstance(es_config,str):
-            with open(es_config) as f:
-                connection_kwargs = json.load(f)
-        else:
-            connection_kwargs = es_config
+        super().__init__("stac-flightfinder-items", es_config=es_config)
 
         with open('stac_template.json') as f:
             self.required_keys = json.load(f).keys()
 
-        self.es = Elasticsearch(**connection_kwargs)
-
     def push_flights(self, file_list):
+        flight_list = []
+        if isinstance(file_list[0], str):
+            for file in file_list:
+                with open(os.path.join(self.rootdir, file)) as f:
+                    flight_list.append(json.load(f))
+        elif isinstance(file_list[0], dict):
+            flight_list = file_list
+        else:
+            raise FileNotFoundError(file_list[0])
+        self.push_records(flight_list)
+        
+    def preprocess_records(self, file_list):
         
         def set_defaults(refs):
             collection = refs['collection']
@@ -81,6 +85,7 @@ class ESFlightClient():
 
         self.linked = 0
         self.total = len(file_list)
+        records = []
         for refs in file_list:
             if '_source' in refs.keys():
                 id = refs['_id']
@@ -92,10 +97,10 @@ class ESFlightClient():
                 if source['es_id']:
                     id = source['es_id']
                 else:
-                    id = genID()
+                    id = gen_id()
                     source['es_id'] = id
             else:
-                id = genID()
+                id = gen_id()
                 source['es_id'] = id
 
             source['catalogue_link'] = ''
@@ -116,12 +121,9 @@ class ESFlightClient():
             source['last_update'] = datetime.strftime(datetime.now(),'%Y-%m-%d %H:%M:%S')
 
             refs['_source'] = source
+            records.append(refs)
 
-            yield refs
-        
-    def bulk_push(self, flights):
-        print('Creating bulk push')
-        bulk(self.es, self.push_flights(flights))
+        return records
 
     def obtain_field(self, id, fieldnames):
         search = {
@@ -142,44 +144,13 @@ class ESFlightClient():
         except IndexError: # No entry found
             return None
 
-    def obtain_records(self):
-        search = {
-            "size":10000,
-            "query": {
-                "match_all":{}
-            }
-        }
-
-        resp = self.es.search(
-            index=self.index,
-            body=search)
-
-        try:
-            return resp['hits']['hits']
-        except IndexError: # No entry found
-            return None
-
     def add_field(self, id, data, fieldname):
         # Update mapping
         self.es.update(index=self.index, doc_type='_doc', id=id, body={'doc':{fieldname:data}})
 
-    def obtain_ids(self):
-        search = {
-            "size":10000,
-            "query": {
-                "match_all":{}
-            }
-        }
-
-        resp = self.es.search(
-            index=self.index,
-            body=search)
-        
-        return resp['hits']['hits']
-
     def sort_codes(self):
 
-        ids = [i['_source']['id'] for i in self.obtain_ids()]
+        ids = [i['_source']['id'] for i in self.pull_records()]
 
         self.ptcodes = {}
         self.ys, self.yms, self.ymds = {},{},{}
