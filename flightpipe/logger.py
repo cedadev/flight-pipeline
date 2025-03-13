@@ -1,6 +1,6 @@
 import logging
 
-def setup_logging(enable_logging=True):
+def setup_logging(enable_logging=True, console_logging=True):
     """
     Sets up logging configuration. If `enable_logging` is False, no logging will occur.
     
@@ -16,15 +16,19 @@ def setup_logging(enable_logging=True):
     if log_file == '':
         print("Error: Please fill in the third directory in dirconfig file")
 
+    handlers = [
+            logging.FileHandler(log_file),  # Write output to file
+        ]
+
+    if console_logging:
+        handlers.append(logging.StreamHandler())   # Logs to the console if enabled
+
 
     if enable_logging:
         logging.basicConfig(
             level=logging.DEBUG, # Capture all levels
             format='%(asctime)s - %(levelname)s - %(message)s',
-            handlers=[
-                logging.FileHandler(log_file),  # Write output to file
-                logging.StreamHandler()  # Logs to the console
-            ]
+            handlers=handlers
         )
     else:
         # Disable logging by setting a null handler
