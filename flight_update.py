@@ -8,7 +8,7 @@ from flightpipe.flight_client import ESFlightClient
 import importlib
 
 import logging
-from flightpipe.logger import setup_logging
+from flightpipe.logger import logger
 
 import argparse
 
@@ -18,16 +18,6 @@ IS_FORCE = True
 VERB = True
 
 settings_file = 'settings.json'
-
-
-enable_logging = True
-
-# Set up logging with a flag (True to enable logging, False to disable logging)
-setup_logging(enable_logging)  # Change to False to disable logging
-
-# Example usage of the logger
-logger = logging.getLogger(__name__)
-
 
 def openConfig():
     """
@@ -49,6 +39,7 @@ def openConfig():
     try:
         return content[1].replace('\n',''), content[3].replace('\n','')
     except IndexError:
+        logger.error('Error: One or both paths missing from the dirconfig file')
         print('Error: One or both paths missing from the dirconfig file - please fill these in')
         return '',''
 
@@ -150,8 +141,8 @@ if __name__ == '__main__':
         logger.debug("Debug: Mode set to add")
         root, archive = openConfig()
 
-        logger.debug("Debug: Root directory set to", root)
-        logger.debug("Debug: Archive set to", archive)
+        logger.debug("Debug: Root directory set to %s", root)
+        logger.debug("Debug: Archive set to %s", archive)
 
         if archive == '':
             print('Error: Please fill in second directory in dirconfig file')
