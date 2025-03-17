@@ -35,4 +35,11 @@ def setup_logging(enable_logging=True, console_logging=True):
         logging.basicConfig(level=logging.CRITICAL)
         #NOTSET for no alerts at all
 
+
+enable_logging = True
+
+# Set up logging with a flag (True to enable logging, False to disable logging)
+setup_logging(enable_logging)  # Change to False to disable logging
+
+logger = logging.getLogger(__name__)
     
