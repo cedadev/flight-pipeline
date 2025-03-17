@@ -16,6 +16,12 @@ documentation for details.
    :caption: Contents:
 
 
+.. image:: _images/Flight-finder-preview.png
+   :align: center
+   :alt: Alternative text for the image
+   :width: 50%
+
+
 .. automodule:: flight_update
    :members:
    :undoc-members:

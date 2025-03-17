@@ -8,9 +8,9 @@
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath('.'))
-sys.path.insert(0, os.path.abspath('flightpipe'))
-sys.path.insert(0, os.path.abspath('flightpipe/updaters'))
+sys.path.insert(0, os.path.abspath('../'))
+sys.path.insert(0, os.path.abspath('../flightpipe'))
+sys.path.insert(0, os.path.abspath('../flightpipe/updaters'))
 
 project = 'Flight-Finder'
 author = 'Daniel Westwood'
@@ -26,10 +26,11 @@ extensions = [
 
 templates_path = ['_templates']
 exclude_patterns: list[str] = []
+highlight_language = 'python'
 
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
