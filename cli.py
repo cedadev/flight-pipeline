@@ -1,32 +1,8 @@
-'''
---- Command Line Interface ---
- - run flight_update through a cli
- - options to set logging/paths/update mode/change settings file 
-'''
-
-
 import click
-
 import sys
+from flight_update import addFlights, updateFlights
 
-# set archive path
-# set path of dir where flights to be pushed are located
-# set logging to true/false
-# set logging to file or console 
-# set to update mode
-# set to add mode
-# option to change settings.json? hosts, api key
-
-@click.command()
-@click.option('--logging', default=1, help='Set to True/False', prompt='Enable logging (y/n):')
-@click.option('--enable_console_logging', default=1, help='Set to True/False', prompt='Log to console (y/n):')
-@click.option('--archive_path', default=1, help='Set to True/False', prompt='Set archive path:')
-@click.option('--flights_dir', default=1, help='Set to True/False', prompt='Set path to flights to be pushed:')
-@click.option('--add_mode', default=1, help='Set to True/False', prompt='Set to mode to add (y/n):')
-@click.option('--update_mode', default=1, help='Set to True/False', prompt='Set to update mode (y/n):')
-@click.option('--update_settings', default=1, help='Update settings.json file', prompt='Update settings.json file (y/n):')
-
-
+# Helper function for converting string to boolean
 def str2bool(v):
     """
     Input parameter: Str
@@ -34,10 +10,51 @@ def str2bool(v):
     """
     return v.lower() in ("y", "yes", "true", "t", "1")
 
+@click.group()
+def main():
+    """Command Line Interface for flight update"""
+    pass
 
-def main(logging, enable_console_logging, archive_path, flights_dir, add_mode, update_mode, update_settings):
+@main.command()
+@click.option('--logging', default=True, type=bool, help='Enable logging (True/False)', prompt='Enable logging (y/n)')
+@click.option('--enable_console_logging', default=False, type=bool, help='Log to console (True/False)', prompt='Log to console (y/n)')
+@click.option('--archive_path', required=True, help='Set archive path', prompt='Set archive path')
+@click.option('--flights_dir', required=True, help='Set path where flights will be pushed', prompt='Set path to flights to be pushed')
+@click.option('--add_mode', default="y", type=str, help='Set mode to just add flights', prompt='Set mode to add flights (y/n)')
+@click.option('--update_mode', default="n", type=str, help='Set mode to update flights', prompt='Set update mode (y/n)')
+@click.option('--update_id', default="n", type=str, help='Update based on specific id', prompt='Flight id to update')
+@click.option('--update_settings', default="n", type=str, help='Update settings.json file', prompt='Update settings.json file (y/n)')
 
-    return 0
+
+
+def run_flight_update(logging, enable_console_logging, archive_path, flights_dir, add_mode, update_mode, update_id, update_settings):
+    """
+    Main function running the flight_update.py script based on the given command line parameters
+    """
+    IS_FORCE = False
+    REPUSH = False
+
+    # Convert add_mode and update_mode from strings to booleans
+    add_mode = str2bool(add_mode)
+    update_mode = str2bool(update_mode)
+
+    if add_mode:
+        # Ensure archive_path and flights_dir are not empty
+        if not archive_path:
+            print('Error: Please provide an archive path.')
+            sys.exit(1)
+        elif not flights_dir:
+            print('Error: Please provide a directory for flights.')
+            sys.exit(1)
+        else:
+            addFlights(flights_dir, archive_path, repush=REPUSH)
+
+    elif update_mode:
+        updateFlights(update_id)
+
+    else:
+        print('Error: Mode unrecognized. Please choose either add or update.')
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()
