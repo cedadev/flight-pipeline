@@ -3,3 +3,4 @@ settings.json
 local/
 localcache/
 *pyc
+build/
