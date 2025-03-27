@@ -6,6 +6,13 @@
 Flight-pipeline documentation
 =============================
 
+The CEDA Flight Finder tool allows searching for flights within the CEDA flights index using based on different paramenter parameters. Search for specific flights by Collection, Flight Code, Instrument or Keyword Search, or filter specific flights by temporal geospatial parameters. Flights from FAAM, NERC-ARSF, SAFIRE, AWI-Polar5, Kit-Enduro, and INTA-CASA aircraft and the APEX instrument flown on the DLR aircraft are now included.
+Up to the first 1000 flights will be plotted on the map with most recent on top. The default view is the 100 most recent flights.
+
+`The CEDA Flight Finder tool can be accessed here <https://flight-finder.ceda.ac.uk/>`_
+
+Created March 2023
+
 
 .. image:: _images/flight-finder-preview.png
    :align: center
@@ -24,6 +31,7 @@ Flight-pipeline documentation
    Command Line Tool <core/cli>
 
 Repository for python code to concatenate data sources and construct new flight records for CEDA flight-finder
+
 
 Objectives
 ----------
