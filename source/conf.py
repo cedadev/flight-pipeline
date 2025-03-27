@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.abspath('../flightpipe'))
 sys.path.insert(0, os.path.abspath('../flightpipe/updaters'))
 
 project = 'Flight-Finder'
-author = 'Daniel Westwood'
+author = 'Daniel Westwood, Ioana Mara Circu'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
