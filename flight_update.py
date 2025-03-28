@@ -39,7 +39,7 @@ def openConfig():
     try:
         return content[1].replace('\n',''), content[3].replace('\n','')
     except IndexError:
-        logger.error('Error: One or both paths missing from the dirconfig file')
+        logger.error('One or both paths missing from the dirconfig file')
         print('Error: One or both paths missing from the dirconfig file - please fill these in')
         return '',''
 
@@ -138,19 +138,19 @@ if __name__ == '__main__':
     REPUSH = False
 
     if args.mode == 'add':
-        logger.debug("Debug: Mode set to add")
+        logger.debug("Mode set to add")
         root, archive = openConfig()
 
-        logger.debug("Debug: Root directory set to %s", root)
-        logger.debug("Debug: Archive set to %s", archive)
+        logger.debug("Root directory set to %s", root)
+        logger.debug("Archive set to %s", archive)
 
         if archive == '':
             print('Error: Please fill in second directory in dirconfig file')
-            logger.error("Error: Second directory in dirconfig file missing")
+            logger.error("Second directory in dirconfig file missing")
             sys.exit()
         elif root == '':
             print('Error: Please fill in first directory in dirconfig file')
-            logger.error("Error: First directory in dirconfig file missing")
+            logger.error("First directory in dirconfig file missing")
             sys.exit()
         else:
             addFlights(root, archive, repush=REPUSH)
@@ -165,18 +165,18 @@ if __name__ == '__main__':
         """
 
     elif args.mode == 'update':
-        logger.debug("Debug: Mode set to update")
+        logger.debug("Mode set to update")
         updateFlights(args.update)
 
     elif args.mode == 'add_moles':
-        logger.debug("Debug: Mode set to add moles")
+        logger.debug("Mode set to add moles")
         updateFlights('moles')
 
     elif args.mode == 'reindex':
-        logger.debug("Debug: Mode set to reindex")
+        logger.debug("Mode set to reindex")
         reindex(args.new_index)
     else:
-        logger.error("Error: Mode unrecognised - ", args.mode)
+        logger.error("Mode unrecognised - ", args.mode)
         print('Error: Mode unrecognised - ', args.mode)
         sys.exit()
 
