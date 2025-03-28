@@ -42,4 +42,9 @@ enable_logging = True
 setup_logging(enable_logging)  # Change to False to disable logging
 
 logger = logging.getLogger(__name__)
-    
+
+
+
+__author__    = "Ioana Circu"
+__contact__   = "ioana.circu@stfc.ac.uk"
+__copyright__ = "Copyright 2025 United Kingdom Research and Innovation"
