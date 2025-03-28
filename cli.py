@@ -58,3 +58,8 @@ def run_flight_update(logging, enable_console_logging, archive_path, flights_dir
 
 if __name__ == '__main__':
     main()
+
+
+__author__    = "Ioana Circu"
+__contact__   = "ioana.circu@stfc.ac.uk"
+__copyright__ = "Copyright 2025 United Kingdom Research and Innovation"
