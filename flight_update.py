@@ -7,6 +7,8 @@
 from flightpipe.flight_client import ESFlightClient
 import importlib
 
+import logging
+
 import argparse
 
 import os, sys
@@ -16,19 +18,37 @@ VERB = True
 
 settings_file = 'settings.json'
 
+
 def openConfig():
+    """
+    Function to open configuration file and initialise paths to relevant directories.
+    
+    Returns: 
+        1. Path to flights to be pushed to ElasticSearch
+        2. Path to directory for moving written flights
+        3. Path to logging file
+    """
+
     if VERB:
         print('> (1/6) Opening Config File')
+        logging.info('> (1/6) Opening Config File')
+
     f = open('dirconfig','r')
     content = f.readlines()
     f.close()
     try:
-        return content[1].replace('\n',''), content[3].replace('\n','')
+        return content[1].replace('\n',''), content[3].replace('\n',''), content[5].replace('\n','')
     except IndexError:
         print('Error: One or both paths missing from the dirconfig file - please fill these in')
         return '',''
 
 def moveOldFiles(rootdir, archive, files):
+    """
+    Move the written files from the root directory given in the config file to the archive
+
+    If keyword DELETE given instead of archive then the flight records will be deleted after being pushed
+    """
+
     # Move the written files from rootdir to the archive
     if archive != 'DELETE':
         for file in files:
@@ -42,12 +62,18 @@ def moveOldFiles(rootdir, archive, files):
 
 
 def addFlights(rootdir, archive, repush=False):
+    """
+    Initialising connection with ElasticSearch Flight Client and pushing flights to new location.
+
+    Calling moveOldFiles() to delete flight records before exiting.
+    """
 
     checked_list = []
 
     # ES client to determine array of ids
     if VERB:
         print('> (2/6) Setting up ES Flight Client')
+        logging.info('> (2/6) Setting up ES Flight Client')
     if repush:
         files_list = os.listdir(archive)
         fclient = ESFlightClient(archive, settings_file)
@@ -61,26 +87,36 @@ def addFlights(rootdir, archive, repush=False):
     # Push new flights to index
     if VERB:
         print('> (4/6) Identified {} flights'.format(len(checked_list)))
+        logging.info('> (4/6) Identified {} flights'.format(len(checked_list)))
     if len(checked_list) > 0:
         fclient.push_flights(checked_list)
         if VERB:
             print('> (5/6) Pushed flights to ES Index')
+            logging.info('> (5/6) Pushed flights to ES Index')
         if not repush:
             moveOldFiles(rootdir, archive, checked_list)
         if VERB:
             print('> (6/6) Removed local files from push directory')
+            logging.info('> (6/6) Removed local files from push directory')
     else:
         if VERB:
             print('> Exiting flight pipeline')
+            logging.info('> Exiting flight pipeline')
 
     # Move old records into an archive directory
 
 def updateFlights(update):
+    """
+    Update flights using resolve_link() from flightpipe/flight_client module.
+    """
     from flightpipe import updaters
     fclient = ESFlightClient('', settings_file)
     updaters[update](fclient)
 
 def reindex(new_index):
+    """
+    Running a re-index using the source and destination from settings_file.
+    """
     fclient = ESFlightClient('', settings_file)
     fclient.reindex(new_index)
 
@@ -101,12 +137,27 @@ if __name__ == '__main__':
     REPUSH = False
 
     if args.mode == 'add':
-        root, archive = openConfig()
+        root, archive, log_file = openConfig()
+
+        if log_file == '':
+            print("Error: Please fill in the third directory in dirconfig file")
+
+        # Set up logging config
+        logging.basicConfig(
+            level=logging.DEBUG,  # Capture all levels
+            format='%(asctime)s - %(levelname)s - %(message)s',  # timestamp, level, message
+            handlers=[
+                logging.FileHandler(log_file),  # Write output to file
+                logging.StreamHandler()  # If logging to console
+            ]
+        )
         if archive == '':
             print('Error: Please fill in second directory in dirconfig file')
+            logging.error("Error: Second directory in dirconfig file missing")
             sys.exit()
         elif root == '':
             print('Error: Please fill in first directory in dirconfig file')
+            logging.error("Error: First directory in dirconfig file missing")
             sys.exit()
         else:
             addFlights(root, archive, repush=REPUSH)
