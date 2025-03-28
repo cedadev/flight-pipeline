@@ -1,4 +1,6 @@
 # Directory containing new flights to be pushed to Elasticsearch
-/home/badc/software/datasets/flight-finder/add_records/
+/home/users/icircu/flight-pipeline/add/
 # Directory for moving written flights - write DELETE to remove pushed flight records from the local system after pushing.
-/home/badc/software/datasets/flight-finder/stac-flightfinder-items/
+/home/users/icircu/test-flights/
+# Logging File
+/home/users/icircu/test-flights/logging

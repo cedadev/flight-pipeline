@@ -11,7 +11,10 @@ import numpy as np
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
 
-from ceda_elastic_py import SimpleClient, gen_id
+from flightpipe.logger import logger
+
+from flightpipe.simple_client import SimpleClient, gen_id
+from flightpipe.logger import setup_logging
 
 from datetime import datetime
 
@@ -22,6 +25,7 @@ import urllib3
 urllib3.disable_warnings()
 
 def resolve_link(path, ):
+    logger.debug("Debug: Resolving link for path %s", path)
     mpath = str(path)
 
     uuid = None
@@ -32,11 +36,13 @@ def resolve_link(path, ):
             r = json.loads(resp)
             if r['results']:
                 uuid = r['results'][0]['uuid']
+                logger.debug("Debug: Reslolving link, found uuid %s", str(uuid))
         except:
             print(f'Unsuccessful link retrieval for {path} - proceeding without')
         path = '/'.join(path.split('/')[:-1])
 
     if not uuid:
+        logger.error("Error: Recursive path search failed for %s", mpath)
         print(f'Recursive path search failed for: {mpath}')
 
     return uuid
@@ -44,14 +50,17 @@ def resolve_link(path, ):
 class ESFlightClient(SimpleClient):
     """
     Connects to an elasticsearch instance and exports the
-    documents to elasticsearch."""
+    documents to elasticsearch.
+    """
 
     def __init__(self, rootdir, es_config='settings.json'):
         self.rootdir = rootdir
+        logger.info("Info: Initialising ES Flight Client")
 
-        super().__init__("stac-flightfinder-items", es_config=es_config)
+        super().__init__("stac-flightfinder-items-test", es_config=es_config)
 
         with open('stac_template.json') as f:
+            logger.info("Info: Reading stac templace JSON file")
             self.required_keys = json.load(f).keys()
 
     def push_flights(self, file_list):
@@ -63,10 +72,13 @@ class ESFlightClient(SimpleClient):
         elif isinstance(file_list[0], dict):
             flight_list = file_list
         else:
+            logger.error("Error: Flight file not found %s", str(file_list[0]))
             raise FileNotFoundError(file_list[0])
+        logger.info("Info: Flights to be pushed %s", str(flight_list))
         self.push_records(flight_list)
         
     def preprocess_records(self, file_list):
+        logger.debug("Debug: Processing following records - %s", file_list)
         
         def set_defaults(refs):
             collection = refs['collection']
@@ -116,6 +128,7 @@ class ESFlightClient(SimpleClient):
                 if rq not in source:
                     missing.append(rq)
             if len(missing) > 0:
+                logger.error("Error: File is missing entries - %s", str(missing))
                 raise TypeError(f"File {file} is missing entries:{missing}")
 
             source['last_update'] = datetime.strftime(datetime.now(),'%Y-%m-%d %H:%M:%S')
@@ -126,6 +139,7 @@ class ESFlightClient(SimpleClient):
         return records
 
     def obtain_field(self, id, fieldnames):
+        logger.info("Info: Performing query to obtain the following fields: %s", str(fieldnames))
         search = {
             "_source": fieldnames,
             "query": {
@@ -140,11 +154,14 @@ class ESFlightClient(SimpleClient):
             body=search)
 
         try:
+            logger.info("Info: Found following fields: %s", str(resp['hits']['hits'][0]))
             return resp['hits']['hits'][0]
         except IndexError: # No entry found
+            logger.error("Error: No entry found.")
             return None
 
     def add_field(self, id, data, fieldname):
+        logger.debug("Debug: Update mapping for id - %s", str(id))
         # Update mapping
         self.es.update(index=self.index, doc_type='_doc', id=id, body={'doc':{fieldname:data}})
 
@@ -227,6 +244,7 @@ class ESFlightClient(SimpleClient):
         return 100
 
     def reindex(self, new_index):
+        logger.debug("Debug: Reindex for source %s and destination %s", self.index, new_index)
 
         self.es.reindex({
             "source":{

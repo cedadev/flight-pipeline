@@ -2,3 +2,5 @@ jsons/
 settings.json
 local/
 localcache/
+build/
+*.pyc
