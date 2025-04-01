@@ -120,9 +120,8 @@ def reindex(new_index):
     fclient = ESFlightClient('', settings_file)
     fclient.reindex(new_index)
 
-if __name__ == '__main__':
-
-    # flight_update.py add --overwrite
+def main():
+        # flight_update.py add --overwrite
 
     parser = argparse.ArgumentParser(description='Run the flight pipeline to push or update flights')
     parser.add_argument('mode',    type=str, help='Mode to run for the pipeline (add/update/reindex)')
@@ -183,3 +182,8 @@ if __name__ == '__main__':
         print('Error: Mode unrecognised - ', args.mode)
         sys.exit()
 
+
+
+if __name__ == '__main__':
+
+    main()
