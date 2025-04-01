@@ -1,6 +1,8 @@
 import click
 import sys
-from flight_update import addFlights, updateFlights
+from flight_update import addFlights, updateFlights, openConfig
+
+root, archive = openConfig()
 
 # Helper function for converting string to boolean
 def str2bool(v):
@@ -16,18 +18,17 @@ def main():
     pass
 
 @main.command()
-@click.option('--logging', default=True, type=bool, help='Enable logging (True/False)', prompt='Enable logging (y/n)')
-@click.option('--enable_console_logging', default=False, type=bool, help='Log to console (True/False)', prompt='Log to console (y/n)')
-@click.option('--archive_path', required=True, help='Set archive path', prompt='Set archive path')
-@click.option('--flights_dir', required=True, help='Set path where flights will be pushed', prompt='Set path to flights to be pushed')
+@click.option('--logging', default="y", type=bool, help='Enable logging (True/False)', prompt='Enable logging (y/n)')
+@click.option('--enable_console_logging', default="n", type=bool, help='Log to console (True/False)', prompt='Log to console (y/n)')
+@click.option('--archive_path', default=archive, required=True, help='Set archive path', prompt='Set archive path')
+@click.option('--flights_dir', default=root, required=True, help='Set path where flights will be pushed', prompt='Set path to flights to be pushed')
 @click.option('--add_mode', default="y", type=str, help='Set mode to just add flights', prompt='Set mode to add flights (y/n)')
 @click.option('--update_mode', default="n", type=str, help='Set mode to update flights', prompt='Set update mode (y/n)')
 @click.option('--update_id', default="n", type=str, help='Update based on specific id', prompt='Flight id to update')
-@click.option('--update_settings', default="n", type=str, help='Update settings.json file', prompt='Update settings.json file (y/n)')
 
 
 
-def run_flight_update(logging, enable_console_logging, archive_path, flights_dir, add_mode, update_mode, update_id, update_settings):
+def run_flight_update(logging, enable_console_logging, archive_path, flights_dir, add_mode, update_mode, update_id):
     """
     Main function running the flight_update.py script based on the given command line parameters
     """
