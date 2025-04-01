@@ -18,3 +18,8 @@ The user can change the following options:
 - ``add_mode``: ``bool`` where the mode is set to add flights to archive
 
 - ``update_mode``: ``bool`` where mode is set to update the archived flights
+
+
+How to run the flightpipe:
+
+``python cli.py run-flight-update``

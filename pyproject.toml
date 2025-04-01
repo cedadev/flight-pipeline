@@ -29,3 +29,4 @@ build-backend = "poetry.core.masonry.api"
 
 [project.scripts]
 flightpipe = "flightpipe.flight_update:main"
+run-flight-update = "flightpipe.cli:main"
