@@ -8,6 +8,7 @@ from flightpipe.flight_client import ESFlightClient
 import importlib
 
 import logging
+from flightpipe.logger import logger
 
 import argparse
 
@@ -17,7 +18,6 @@ IS_FORCE = True
 VERB = True
 
 settings_file = 'settings.json'
-
 
 def openConfig():
     """
@@ -31,14 +31,15 @@ def openConfig():
 
     if VERB:
         print('> (1/6) Opening Config File')
-        logging.info('> (1/6) Opening Config File')
+        logger.info('> (1/6) Opening Config File')
 
     f = open('dirconfig','r')
     content = f.readlines()
     f.close()
     try:
-        return content[1].replace('\n',''), content[3].replace('\n',''), content[5].replace('\n','')
+        return content[1].replace('\n',''), content[3].replace('\n','')
     except IndexError:
+        logger.error('One or both paths missing from the dirconfig file')
         print('Error: One or both paths missing from the dirconfig file - please fill these in')
         return '',''
 
@@ -73,7 +74,7 @@ def addFlights(rootdir, archive, repush=False):
     # ES client to determine array of ids
     if VERB:
         print('> (2/6) Setting up ES Flight Client')
-        logging.info('> (2/6) Setting up ES Flight Client')
+        logger.info('> (2/6) Setting up ES Flight Client')
     if repush:
         files_list = os.listdir(archive)
         fclient = ESFlightClient(archive, settings_file)
@@ -87,21 +88,21 @@ def addFlights(rootdir, archive, repush=False):
     # Push new flights to index
     if VERB:
         print('> (4/6) Identified {} flights'.format(len(checked_list)))
-        logging.info('> (4/6) Identified {} flights'.format(len(checked_list)))
+        logger.info('> (4/6) Identified {} flights'.format(len(checked_list)))
     if len(checked_list) > 0:
         fclient.push_flights(checked_list)
         if VERB:
             print('> (5/6) Pushed flights to ES Index')
-            logging.info('> (5/6) Pushed flights to ES Index')
+            logger.info('> (5/6) Pushed flights to ES Index')
         if not repush:
             moveOldFiles(rootdir, archive, checked_list)
         if VERB:
             print('> (6/6) Removed local files from push directory')
-            logging.info('> (6/6) Removed local files from push directory')
+            logger.info('> (6/6) Removed local files from push directory')
     else:
         if VERB:
             print('> Exiting flight pipeline')
-            logging.info('> Exiting flight pipeline')
+            logger.info('> Exiting flight pipeline')
 
     # Move old records into an archive directory
 
@@ -136,27 +137,19 @@ def main():
     REPUSH = False
 
     if args.mode == 'add':
-        root, archive, log_file = openConfig()
+        logger.debug("Mode set to add")
+        root, archive = openConfig()
 
-        if log_file == '':
-            print("Error: Please fill in the third directory in dirconfig file")
+        logger.debug("Root directory set to %s", root)
+        logger.debug("Archive set to %s", archive)
 
-        # Set up logging config
-        logging.basicConfig(
-            level=logging.DEBUG,  # Capture all levels
-            format='%(asctime)s - %(levelname)s - %(message)s',  # timestamp, level, message
-            handlers=[
-                logging.FileHandler(log_file),  # Write output to file
-                logging.StreamHandler()  # If logging to console
-            ]
-        )
         if archive == '':
             print('Error: Please fill in second directory in dirconfig file')
-            logging.error("Error: Second directory in dirconfig file missing")
+            logger.error("Second directory in dirconfig file missing")
             sys.exit()
         elif root == '':
             print('Error: Please fill in first directory in dirconfig file')
-            logging.error("Error: First directory in dirconfig file missing")
+            logger.error("First directory in dirconfig file missing")
             sys.exit()
         else:
             addFlights(root, archive, repush=REPUSH)
@@ -171,14 +164,18 @@ def main():
         """
 
     elif args.mode == 'update':
+        logger.debug("Mode set to update")
         updateFlights(args.update)
 
     elif args.mode == 'add_moles':
+        logger.debug("Mode set to add moles")
         updateFlights('moles')
 
     elif args.mode == 'reindex':
+        logger.debug("Mode set to reindex")
         reindex(args.new_index)
     else:
+        logger.error("Mode unrecognised - ", args.mode)
         print('Error: Mode unrecognised - ', args.mode)
         sys.exit()
 
