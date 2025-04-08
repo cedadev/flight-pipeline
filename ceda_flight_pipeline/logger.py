@@ -6,7 +6,7 @@ def setup_logging(enable_logging=True, console_logging=True):
     
     :param enable_logging: Flag to enable/disable logging.
     """
-    file = "dirconfig"
+    file = "../dirconfig"
 
     with open(file) as f: # 'r' is default if not specified.
         content = [r.strip() for r in f.readlines()] # Removes the '\n' from all lines
