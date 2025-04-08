@@ -9,7 +9,6 @@ Up to the first 1000 flights will be plotted on the map with most recent on top.
 
 `The CEDA Flight Finder tool can be accessed here <https://flight-finder.ceda.ac.uk/>`_
 
-Created March 2023
 
 Flight Update
 =============
