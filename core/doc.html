@@ -48,7 +48,21 @@
 <li class="toctree-l2"><a class="reference internal" href="#project-description">Project description</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#flight-update">Flight Update</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#elastic-search-flight-client">Elastic Search Flight Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#flight-client-wrapper">Flight Client Wrapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-simple_client">Flight Client Wrapper</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#simple_client.ResponseException"><code class="docutils literal notranslate"><span class="pre">ResponseException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#simple_client.SimpleClient"><code class="docutils literal notranslate"><span class="pre">SimpleClient</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#simple_client.SimpleClient.establish_id"><code class="docutils literal notranslate"><span class="pre">SimpleClient.establish_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simple_client.SimpleClient.get_size"><code class="docutils literal notranslate"><span class="pre">SimpleClient.get_size()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simple_client.SimpleClient.preprocess_records"><code class="docutils literal notranslate"><span class="pre">SimpleClient.preprocess_records()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simple_client.SimpleClient.process_records"><code class="docutils literal notranslate"><span class="pre">SimpleClient.process_records()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simple_client.SimpleClient.pull_records"><code class="docutils literal notranslate"><span class="pre">SimpleClient.pull_records()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simple_client.SimpleClient.push_records"><code class="docutils literal notranslate"><span class="pre">SimpleClient.push_records()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#simple_client.create_settings"><code class="docutils literal notranslate"><span class="pre">create_settings()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#simple_client.gen_id"><code class="docutils literal notranslate"><span class="pre">gen_id()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#write-flights">Write Flights</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-moles">Get Moles</a></li>
 </ul>
@@ -94,8 +108,69 @@ Up to the first 1000 flights will be plotted on the map with most recent on top.
 <section id="elastic-search-flight-client">
 <h2>Elastic Search Flight Client<a class="headerlink" href="#elastic-search-flight-client" title="Link to this heading"></a></h2>
 </section>
-<section id="flight-client-wrapper">
-<h2>Flight Client Wrapper<a class="headerlink" href="#flight-client-wrapper" title="Link to this heading"></a></h2>
+<section id="module-simple_client">
+<span id="flight-client-wrapper"></span><h2>Flight Client Wrapper<a class="headerlink" href="#module-simple_client" title="Link to this heading"></a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="simple_client.ResponseException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simple_client.</span></span><span class="sig-name descname"><span class="pre">ResponseException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simple_client.ResponseException" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Response Exception - Elasticsearch did not return an object with any ‘hits’. This indicates an error,
+as even with 0 hits returned there should still be an empty ‘hits’ list here.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="simple_client.SimpleClient">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simple_client.</span></span><span class="sig-name descname"><span class="pre">SimpleClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">es_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simple_client.SimpleClient" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Simple Elasticsearch-Python client for bulk operations</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="simple_client.SimpleClient.establish_id">
+<span class="sig-name descname"><span class="pre">establish_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simple_client.SimpleClient.establish_id" title="Link to this definition"></a></dt>
+<dd><p>Add _id and other required fields before pushing new entries.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simple_client.SimpleClient.get_size">
+<span class="sig-name descname"><span class="pre">get_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simple_client.SimpleClient.get_size" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simple_client.SimpleClient.preprocess_records">
+<span class="sig-name descname"><span class="pre">preprocess_records</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">records</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simple_client.SimpleClient.preprocess_records" title="Link to this definition"></a></dt>
+<dd><p>Blank preprocessor method - override with preprocessing steps for specific
+client use-cases.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simple_client.SimpleClient.process_records">
+<span class="sig-name descname"><span class="pre">process_records</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">records</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simple_client.SimpleClient.process_records" title="Link to this definition"></a></dt>
+<dd><p>Final processing step to add ids to new records if they are not already present.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simple_client.SimpleClient.pull_records">
+<span class="sig-name descname"><span class="pre">pull_records</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simple_client.SimpleClient.pull_records" title="Link to this definition"></a></dt>
+<dd><p>Pull all records up to 10,000 and return all hits.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simple_client.SimpleClient.push_records">
+<span class="sig-name descname"><span class="pre">push_records</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">records</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simple_client.SimpleClient.push_records" title="Link to this definition"></a></dt>
+<dd><p>Push records using bulk helper tool.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simple_client.create_settings">
+<span class="sig-prename descclassname"><span class="pre">simple_client.</span></span><span class="sig-name descname"><span class="pre">create_settings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">es_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'es_settings.json'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simple_client.create_settings" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simple_client.gen_id">
+<span class="sig-prename descclassname"><span class="pre">simple_client.</span></span><span class="sig-name descname"><span class="pre">gen_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simple_client.gen_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
 <section id="write-flights">
 <h2>Write Flights<a class="headerlink" href="#write-flights" title="Link to this heading"></a></h2>
