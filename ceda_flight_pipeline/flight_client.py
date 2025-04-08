@@ -11,10 +11,10 @@ import numpy as np
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
 
-from flightpipe.logger import logger
+from ceda_flight_pipeline.logger import logger
 
-from flightpipe.simple_client import SimpleClient, gen_id
-from flightpipe.logger import setup_logging
+from ceda_flight_pipeline.simple_client import SimpleClient, gen_id
+from ceda_flight_pipeline.logger import setup_logging
 
 from datetime import datetime
 

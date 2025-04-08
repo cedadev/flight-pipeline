@@ -1,4 +1,4 @@
-from flightpipe.flight_client import resolve_link
+from ceda_flight_pipeline.flight_client import resolve_link
 import json
 
 def update_moles(client, thorough=False, cache=True):

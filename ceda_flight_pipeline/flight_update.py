@@ -4,11 +4,11 @@
   - Use ES Client to determine array of ids that currently exists in the index
   - Push new records
 '''
-from flightpipe.flight_client import ESFlightClient
+from ceda_flight_pipeline.flight_client import ESFlightClient
 import importlib
 
 import logging
-from flightpipe.logger import logger
+from ceda_flight_pipeline.logger import logger
 
 import argparse
 
@@ -110,7 +110,7 @@ def updateFlights(update):
     """
     Update flights using resolve_link() from flightpipe/flight_client module.
     """
-    from flightpipe import updaters
+    from ceda_flight_pipeline import updaters
     fclient = ESFlightClient('', settings_file)
     updaters[update](fclient)
 

@@ -9,8 +9,8 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../'))
-sys.path.insert(0, os.path.abspath('../flightpipe'))
-sys.path.insert(0, os.path.abspath('../flightpipe/updaters'))
+sys.path.insert(0, os.path.abspath('../ceda_flight_pipeline'))
+sys.path.insert(0, os.path.abspath('../ceda_flight_pipeline/updaters'))
 
 project = 'Flight-Finder'
 author = 'Daniel Westwood, Ioana Mara Circu'

@@ -1,6 +1,7 @@
 import click
 import sys
-from flight_update import addFlights, updateFlights, openConfig
+
+from ceda_flight_pipeline.flight_update import addFlights, updateFlights, openConfig
 
 root, archive = openConfig()
 

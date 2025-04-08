@@ -4,7 +4,7 @@
   - Copied from elastic_scrapers/scraper_code
 '''
 
-from flightpipe.utils import jsonWrite
+from ceda_flight_pipeline.utils import jsonWrite
 
 def addList(item,id):
     buffer = []
