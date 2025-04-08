@@ -6,12 +6,16 @@ def setup_logging(enable_logging=True, console_logging=True):
     
     :param enable_logging: Flag to enable/disable logging.
     """
-    file = "../dirconfig"
 
-    with open(file) as f: # 'r' is default if not specified.
-        content = [r.strip() for r in f.readlines()] # Removes the '\n' from all lines
+    try:
+        file = "../dirconfig"
 
-    log_file = content[5].replace('\n','')
+        with open(file) as f: # 'r' is default if not specified.
+            content = [r.strip() for r in f.readlines()] # Removes the '\n' from all lines
+
+        log_file = content[5].replace('\n','')
+    except FileNotFoundError:
+        print("Error: Config file not found.")
 
     if log_file == '':
         print("Error: Please fill in the third directory in dirconfig file")
