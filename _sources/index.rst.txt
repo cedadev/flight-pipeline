@@ -27,8 +27,8 @@ Created March 2023
    :maxdepth: 2
    :caption: Contents:
 
-   Documentation <core/doc>
    Command Line Tool <core/cli>
+   Source Code Documentation <core/doc>
 
 Repository for python code to concatenate data sources and construct new flight records for CEDA flight-finder
 
