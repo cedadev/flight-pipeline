@@ -23,3 +23,13 @@ The user can change the following options:
 How to run the flightpipe:
 
 ``python cli.py run-flight-update``
+
+When running with the above command, the user will be prompted with the following:
+
+- ``Enable logging (y/n) [y]:``: ``bool`` defaults to ``True``
+- ``Log to console (y/n) [n]:``: ``bool`` defaults to ``False``
+- ``Set archive path [../..]:``: ``string`` defaults to value in config file ``dirconfig``
+- ``Set path to flights to be pushed [/home/users/icircu/flight-pipeline/add/]:``: ``string`` defaults to value in config file ``dirconfig``
+- ``Set mode to add flights (y/n) [y]:``: ``bool`` defaults to ``True``
+- ``Set update mode (y/n) [n]:``: ``bool`` defaults to ``False``
+- ``Flight id to update [n]:``: ``string`` defaults to ``False``
