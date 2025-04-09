@@ -41,11 +41,23 @@ Objectives
 
 Installation
 ------------
-  - Clone the repository from github
-  - Install requirements into a local virtual environment:
-     - ``python -m venv local``
-     - ``source local/bin/activate``
-     - ``pip install -r requirements.txt``
+
+You can either install the ``PyPi`` package through ``pip`` or clone the GitHub repository. The two options can be found below.
+
+**1. Install using pip**
+
+  - Run ``pip install ceda-flight-pipeline``
+  - Install requirements into a local virtual environment using ``Poetry``:
+    - ``poetry install``
+  - Configure dirconfig with relative paths
+
+**OR**
+
+**2. Install by cloning GitHub repository
+
+  - Clone the repository from github by running ``git clone https://github.com/cedadev/flight-pipeline.git``
+  - Install requirements into a local virtual environment using ``Poetry``:
+     - ``poetry install``
   - Configure dirconfig with relative paths
 
 Running the program
