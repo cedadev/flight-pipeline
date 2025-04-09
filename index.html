@@ -114,14 +114,24 @@ Up to the first 1000 flights will be plotted on the map with most recent on top.
 </section>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<p>You can either install the <code class="docutils literal notranslate"><span class="pre">PyPi</span></code> package through <code class="docutils literal notranslate"><span class="pre">pip</span></code> or clone the GitHub repository. The two options can be found below.</p>
+<p><strong>1. Install using pip</strong></p>
 <blockquote>
 <div><ul class="simple">
-<li><p>Clone the repository from github</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">ceda-flight-pipeline</span></code></p></li>
+<li><p>Install requirements into a local virtual environment using <code class="docutils literal notranslate"><span class="pre">Poetry</span></code>:
+- <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span></code></p></li>
+<li><p>Configure dirconfig with relative paths</p></li>
+</ul>
+</div></blockquote>
+<p><strong>OR</strong></p>
+<p><a href="#id1"><span class="problematic" id="id2">**</span></a>2. Install by cloning GitHub repository</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Clone the repository from github by running <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/cedadev/flight-pipeline.git</span></code></p></li>
 <li><dl class="simple">
-<dt>Install requirements into a local virtual environment:</dt><dd><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">venv</span> <span class="pre">local</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">local/bin/activate</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements.txt</span></code></p></li>
+<dt>Install requirements into a local virtual environment using <code class="docutils literal notranslate"><span class="pre">Poetry</span></code>:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span></code></p></li>
 </ul>
 </dd>
 </dl>
