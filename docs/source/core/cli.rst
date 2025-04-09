@@ -36,10 +36,10 @@ When running with the above command, the user will be prompted with the followin
 - ``Flight id to update [n]:``: ``string`` defaults to ``False``
 
 
-When running the help command ``flight-pipeline --help``:
+When running the help command ``flight-pipeline --help``
+========================================================
 
 Usage: flight-pipeline [OPTIONS] COMMAND [ARGS]...
-==================================================
 
   Command Line Interface for flight update
 
@@ -51,9 +51,9 @@ Commands:
 
 
 When running the help command ``flight-pipeline flight-update --help``
+======================================================================
 
 Usage: flight-pipeline flight-update [OPTIONS]
-==============================================
 
   Main function running the flight_update.py script based on the given command
   line parameters
