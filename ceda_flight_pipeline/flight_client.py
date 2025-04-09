@@ -24,7 +24,7 @@ import requests
 import urllib3
 urllib3.disable_warnings()
 
-def resolve_link(path, ):
+def resolve_link(path):
     logger.debug("Debug: Resolving link for path %s", path)
     mpath = str(path)
 
