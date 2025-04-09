@@ -7,7 +7,8 @@ Instructions
 The Command Line Interface (CLI) has been created with the ``click`` Python package. It provides an easy way to build and handle command line arguments.
 
 The user can change the following options:
-- ``archive_path``
+
+- ``archive_path``: the path where the flights will be pushed
 
 - ``flights_path``: the path to where the flights to be pushed are currently located
 
