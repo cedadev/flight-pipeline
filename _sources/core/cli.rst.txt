@@ -30,7 +30,7 @@ When running with the above command, the user will be prompted with the followin
 - ``Enable logging (y/n) [y]:``: ``bool`` defaults to ``True``
 - ``Log to console (y/n) [n]:``: ``bool`` defaults to ``False``
 - ``Set archive path [../..]:``: ``string`` defaults to value in config file ``dirconfig``
-- ``Set path to flights to be pushed [/home/users/icircu/flight-pipeline/add/]:``: ``string`` defaults to value in config file ``dirconfig``
+- ``Set path to flights to be pushed [../..]:``: ``string`` defaults to value in config file ``dirconfig``
 - ``Set mode to add flights (y/n) [y]:``: ``bool`` defaults to ``True``
 - ``Set update mode (y/n) [n]:``: ``bool`` defaults to ``False``
 - ``Flight id to update [n]:``: ``string`` defaults to ``False``
