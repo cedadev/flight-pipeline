@@ -4,8 +4,9 @@ __copyright__ = "Copyright 2025 United Kingdom Research and Innovation"
 
 
 import logging
+import os
 
-def setup_logging(enable_logging=True, console_logging=True):
+def setup_logging(enable_logging=True, console_logging=True) -> None:
     """
     Sets up logging configuration. If `enable_logging` is False, no logging will occur.
     
@@ -15,7 +16,8 @@ def setup_logging(enable_logging=True, console_logging=True):
     log_file = ""
 
     try:
-        file = "dirconfig"
+
+        file = os.environ.get("CONFIG_FILE", None) or "dirconfig"
 
         with open(file) as f: # 'r' is default if not specified.
             content = [r.strip() for r in f.readlines()] # Removes the '\n' from all lines
@@ -24,6 +26,8 @@ def setup_logging(enable_logging=True, console_logging=True):
 
     except FileNotFoundError:
         print("Error: Config file not found.")
+    
+        return
 
     if log_file == '':
         print("Error: Please fill in the third directory in dirconfig file")
