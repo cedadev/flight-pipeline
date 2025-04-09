@@ -34,7 +34,7 @@ def main():
 
 
 
-def run_flight_update(logging, enable_console_logging, archive_path, flights_dir, add_mode, update_mode, update_id):
+def flight_update(logging, enable_console_logging, archive_path, flights_dir, add_mode, update_mode, update_id):
     """
     Main function running the flight_update.py script based on the given command line parameters
     """

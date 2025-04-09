@@ -33,7 +33,7 @@ def openConfig():
         print('> (1/6) Opening Config File')
         logger.info('> (1/6) Opening Config File')
 
-    f = open('../dirconfig','r')
+    f = open('config/dirconfig','r')
     content = f.readlines()
     f.close()
     try:
