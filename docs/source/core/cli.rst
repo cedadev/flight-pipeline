@@ -33,3 +33,26 @@ When running with the above command, the user will be prompted with the followin
 - ``Set mode to add flights (y/n) [y]:``: ``bool`` defaults to ``True``
 - ``Set update mode (y/n) [n]:``: ``bool`` defaults to ``False``
 - ``Flight id to update [n]:``: ``string`` defaults to ``False``
+
+
+When running the help command ``python cli.py run-flight-update --help``:
+
+Usage: cli.py run-flight-update [OPTIONS]
+=========================================
+
+  Main function running the flight_update.py script based on the given command
+  line parameters
+
+Options:
+========
+  --logging BOOLEAN               Enable logging (True/False)
+  --enable_console_logging BOOLEAN
+                                  Log to console (True/False)
+  --archive_path TEXT             Set archive path  [required]
+  --flights_dir TEXT              Set path where flights will be pushed
+                                  [required]
+  --add_mode TEXT                 Set mode to just add flights
+  --update_mode TEXT              Set mode to update flights
+  --update_id TEXT                Update based on specific id
+  --help                          Show this message and exit.
+

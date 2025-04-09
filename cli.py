@@ -28,9 +28,9 @@ def main():
 @click.option('--enable_console_logging', default="n", type=bool, help='Log to console (True/False)', prompt='Log to console (y/n)')
 @click.option('--archive_path', default=archive, required=True, help='Set archive path', prompt='Set archive path')
 @click.option('--flights_dir', default=root, required=True, help='Set path where flights will be pushed', prompt='Set path to flights to be pushed')
-@click.option('--add_mode', default="y", type=str, help='Set mode to just add flights', prompt='Set mode to add flights (y/n)')
-@click.option('--update_mode', default="n", type=str, help='Set mode to update flights', prompt='Set update mode (y/n)')
-@click.option('--update_id', default="n", type=str, help='Update based on specific id', prompt='Flight id to update')
+@click.option('--add_mode', default="y", required=True, type=str, help='Set mode to just flights', prompt='Set mode to add flights (y/n)')
+@click.option('--update_mode', default="n", required=True, type=str, help='Set mode to update flights', prompt='Set update mode (y/n)')
+@click.option('--update_id', default="n", required=True, type=str, help='Update based on specific id', prompt='Flight id to update')
 
 
 
