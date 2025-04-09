@@ -46,7 +46,8 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Command Line Tool</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#instructions">Instructions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#usage-cli-py-run-flight-update-options">Usage: cli.py run-flight-update [OPTIONS]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage-flight-pipeline-options-command-args">Usage: flight-pipeline [OPTIONS] COMMAND [ARGS]…</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage-flight-pipeline-flight-update-options">Usage: flight-pipeline flight-update [OPTIONS]</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#options">Options:</a></li>
 </ul>
 </li>
@@ -103,10 +104,27 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">Set</span> <span class="pre">update</span> <span class="pre">mode</span> <span class="pre">(y/n)</span> <span class="pre">[n]:</span></code>: <code class="docutils literal notranslate"><span class="pre">bool</span></code> defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Flight</span> <span class="pre">id</span> <span class="pre">to</span> <span class="pre">update</span> <span class="pre">[n]:</span></code>: <code class="docutils literal notranslate"><span class="pre">string</span></code> defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
 </ul>
-<p>When running the help command <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">cli.py</span> <span class="pre">run-flight-update</span> <span class="pre">--help</span></code>:</p>
+<p>When running the help command <code class="docutils literal notranslate"><span class="pre">flight-pipeline</span> <span class="pre">--help</span></code>:</p>
 </section>
-<section id="usage-cli-py-run-flight-update-options">
-<h2>Usage: cli.py run-flight-update [OPTIONS]<a class="headerlink" href="#usage-cli-py-run-flight-update-options" title="Link to this heading"></a></h2>
+<section id="usage-flight-pipeline-options-command-args">
+<h2>Usage: flight-pipeline [OPTIONS] COMMAND [ARGS]…<a class="headerlink" href="#usage-flight-pipeline-options-command-args" title="Link to this heading"></a></h2>
+<blockquote>
+<div><p>Command Line Interface for flight update</p>
+</div></blockquote>
+<dl>
+<dt>Options:</dt><dd><dl class="option-list">
+<dt><kbd><span class="option">--help</span></kbd></dt>
+<dd><p>Show this message and exit.</p>
+</dd>
+</dl>
+</dd>
+<dt>Commands:</dt><dd><p>flight-update  Main function running the flight_update.py script based…</p>
+</dd>
+</dl>
+<p>When running the help command <code class="docutils literal notranslate"><span class="pre">flight-pipeline</span> <span class="pre">flight-update</span> <span class="pre">--help</span></code></p>
+</section>
+<section id="usage-flight-pipeline-flight-update-options">
+<h2>Usage: flight-pipeline flight-update [OPTIONS]<a class="headerlink" href="#usage-flight-pipeline-flight-update-options" title="Link to this heading"></a></h2>
 <blockquote>
 <div><p>Main function running the flight_update.py script based on the given command
 line parameters</p>
