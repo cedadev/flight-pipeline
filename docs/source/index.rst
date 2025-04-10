@@ -53,7 +53,7 @@ You can either install the ``PyPi`` package through ``pip`` or clone the GitHub 
 
 **OR**
 
-**2. Install by cloning GitHub repository
+**2. Install by cloning GitHub repository**
 
   - Clone the repository from github by running ``git clone https://github.com/cedadev/flight-pipeline.git``
   - Install requirements into a local virtual environment using ``Poetry``:
@@ -67,10 +67,14 @@ Running the program
 Follow the STAC template json file to create new flight records (more details further down)
 
 **2. Configure dirconfig file**
-Add on lines 2 and 4 the directory paths to where your new flights to push are stored, and where the pushed flights should go once they have been uploaded to the index (store them or write DELETE to remove them from the local system)
+Add on lines 2 and 4 the directory paths to where your new flights to push are stored, and where the pushed flights should go once they have been uploaded to the index (store them or write DELETE to remove them from the local system). Update line 6 with a directory path to a logfile.
 
 **3. Push New Flights**
-Run with command ``python flight_update.py add`` with a filled in dirconfig file to push new records to the index
+Fill in the dirconfig file first to push new records to the index.
+
+Run with command ``flight-pipeline flight-update`` in order to get prompts in the console. 
+
+Or run with command ``flight-pipeline flight-update --archive_path ../../ --flights_dir ../../ --add_mode y --update_mode n --update_id n`` where all the arguments are filled in already
 
 Update Existing Flights
 -----------------------
