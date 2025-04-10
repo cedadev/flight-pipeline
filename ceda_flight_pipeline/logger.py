@@ -6,9 +6,6 @@ __copyright__ = "Copyright 2025 United Kingdom Research and Innovation"
 import logging
 import os
 
-os.environ["CONFIG_FILE"] = "../config/dirconfig"
-os.environ["SETTINGS_FILE"] = "../config/settings.json"
-os.environ["STAC_TEMPLATE"] = "../config/stac_template.json"
 
 def setup_logging(enable_logging=True, console_logging=True, log_file = "") -> None:
     """
@@ -20,6 +17,7 @@ def setup_logging(enable_logging=True, console_logging=True, log_file = "") -> N
 
     if log_file == '':
         print("Error: Please fill in the third directory in dirconfig file")
+        return
 
     handlers = [
             logging.FileHandler(log_file),  # Write output to file
@@ -63,10 +61,14 @@ def get_config():
 
 
 config_info = get_config()
-log_file, enable_logging, console_logging = config_info[0], config_info[1], config_info[2]
+try:
+    log_file, enable_logging, console_logging = config_info[0], config_info[1], config_info[2]
 
-# Set up logging with a flag (True to enable logging, False to disable logging)
-setup_logging(enable_logging, console_logging, log_file)  # Change to False to disable logging
+    # Set up logging with a flag (True to enable logging, False to disable logging)
+    setup_logging(enable_logging, console_logging, log_file)  # Change to False to disable logging
+except:
+    # Set up logging with default parameters
+    setup_logging()
 
 logger = logging.getLogger(__name__)
 
