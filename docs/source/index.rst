@@ -69,7 +69,19 @@ Follow the STAC template json file to create new flight records (more details fu
 **2. Configure dirconfig file**
 Add on lines 2 and 4 the directory paths to where your new flights to push are stored, and where the pushed flights should go once they have been uploaded to the index (store them or write DELETE to remove them from the local system). Update line 6 with a directory path to a logfile.
 
-**3. Push New Flights**
+**3. Set up environment variables**
+
+In order to run the ``flight-pipeline`` project, you will need the following variables in your environment.
+
+ - CONFIG_FILE=/path/to/your/dir/config/dirconfig
+ - STAC_TEMPLATE=/path/to/your/dir/config/stac_template.json
+ - SETTINGS_FILE=/path/to/your/dir/config/settings.json
+
+
+In ``bash`` you can run:
+``export CONFIG_FILE=/path/to/your/dir/config/dirconfig``
+
+**4. Push New Flights**
 Fill in the dirconfig file first to push new records to the index.
 
 Run with command ``flight-pipeline flight-update`` in order to get prompts in the console. 

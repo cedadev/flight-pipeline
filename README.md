@@ -27,6 +27,17 @@ You can either install the ``PyPi`` package through ``pip`` or clone the GitHub 
      - ``poetry install``
   - Configure dirconfig with relative paths
 
+## Setting up environment variables
+In order to run the `flight-pipeline` project, you will need the following variables in your environment.
+```
+CONFIG_FILE=/path/to/your/dir/config/dirconfig
+STAC_TEMPLATE=/path/to/your/dir/config/stac_template.json
+SETTINGS_FILE=/path/to/your/dir/config/settings.json
+```
+
+In `bash` you can run:
+`export CONFIG_FILE=/path/to/your/dir/config/dirconfig`
+
 ## Running the program
 
 ### 1. Use stac_template to write new records
