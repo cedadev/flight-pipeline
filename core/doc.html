@@ -47,30 +47,8 @@
 <li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Tool</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Source Code Documentation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#project-description">Project description</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-flight_update">Flight Update</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#flight_update.addFlights"><code class="docutils literal notranslate"><span class="pre">addFlights()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#flight_update.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#flight_update.moveOldFiles"><code class="docutils literal notranslate"><span class="pre">moveOldFiles()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#flight_update.openConfig"><code class="docutils literal notranslate"><span class="pre">openConfig()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#flight_update.reindex"><code class="docutils literal notranslate"><span class="pre">reindex()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#flight_update.updateFlights"><code class="docutils literal notranslate"><span class="pre">updateFlights()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#module-flight_client">Elastic Search Flight Client</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#flight_client.ESFlightClient"><code class="docutils literal notranslate"><span class="pre">ESFlightClient</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#flight_client.ESFlightClient.add_field"><code class="docutils literal notranslate"><span class="pre">ESFlightClient.add_field()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#flight_client.ESFlightClient.check_ptcode"><code class="docutils literal notranslate"><span class="pre">ESFlightClient.check_ptcode()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#flight_client.ESFlightClient.check_set"><code class="docutils literal notranslate"><span class="pre">ESFlightClient.check_set()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#flight_client.ESFlightClient.obtain_field"><code class="docutils literal notranslate"><span class="pre">ESFlightClient.obtain_field()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#flight_client.ESFlightClient.preprocess_records"><code class="docutils literal notranslate"><span class="pre">ESFlightClient.preprocess_records()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#flight_client.ESFlightClient.push_flights"><code class="docutils literal notranslate"><span class="pre">ESFlightClient.push_flights()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#flight_client.ESFlightClient.reindex"><code class="docutils literal notranslate"><span class="pre">ESFlightClient.reindex()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#flight_client.ESFlightClient.sort_codes"><code class="docutils literal notranslate"><span class="pre">ESFlightClient.sort_codes()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#flight_client.resolve_link"><code class="docutils literal notranslate"><span class="pre">resolve_link()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#flight-update">Flight Update</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#elastic-search-flight-client">Elastic Search Flight Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-simple_client">Flight Client Wrapper</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#simple_client.ResponseException"><code class="docutils literal notranslate"><span class="pre">ResponseException</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#simple_client.SimpleClient"><code class="docutils literal notranslate"><span class="pre">SimpleClient</span></code></a><ul>
@@ -86,22 +64,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#simple_client.gen_id"><code class="docutils literal notranslate"><span class="pre">gen_id()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#module-write_flights">Write Flights</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#write_flights.FlightConverter"><code class="docutils literal notranslate"><span class="pre">FlightConverter</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#write_flights.FlightConverter.convert"><code class="docutils literal notranslate"><span class="pre">FlightConverter.convert()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#write_flights.FlightConverter.convertFile"><code class="docutils literal notranslate"><span class="pre">FlightConverter.convertFile()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#write_flights.FlightConverter.createCatalog"><code class="docutils literal notranslate"><span class="pre">FlightConverter.createCatalog()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#write_flights.FlightConverter.createCollections"><code class="docutils literal notranslate"><span class="pre">FlightConverter.createCollections()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#write_flights.FlightConverter.findFilesRecursive"><code class="docutils literal notranslate"><span class="pre">FlightConverter.findFilesRecursive()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#write_flights.addList"><code class="docutils literal notranslate"><span class="pre">addList()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#module-moles">Get Moles</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#moles.update_moles"><code class="docutils literal notranslate"><span class="pre">update_moles()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#write-flights">Write Flights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-moles">Get Moles</a></li>
 </ul>
 </li>
 </ul>
@@ -138,126 +102,11 @@
 Up to the first 1000 flights will be plotted on the map with most recent on top. The default view is the 100 most recent flights.</p>
 <p><a class="reference external" href="https://flight-finder.ceda.ac.uk/">The CEDA Flight Finder tool can be accessed here</a></p>
 </section>
-<section id="module-flight_update">
-<span id="flight-update"></span><h2>Flight Update<a class="headerlink" href="#module-flight_update" title="Link to this heading"></a></h2>
-<dl class="simple">
-<dt>— Update Flight records —</dt><dd><ul class="simple">
-<li><p>Mechanism for uploading new flight records</p></li>
-<li><p>Use ES Client to determine array of ids that currently exists in the index</p></li>
-<li><p>Push new records</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py function">
-<dt class="sig sig-object py" id="flight_update.addFlights">
-<span class="sig-prename descclassname"><span class="pre">flight_update.</span></span><span class="sig-name descname"><span class="pre">addFlights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rootdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repush</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_update.addFlights" title="Link to this definition"></a></dt>
-<dd><p>Initialising connection with ElasticSearch Flight Client and pushing flights to new location.</p>
-<p>Calling moveOldFiles() to delete flight records before exiting.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="flight_update.main">
-<span class="sig-prename descclassname"><span class="pre">flight_update.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flight_update.main" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="flight_update.moveOldFiles">
-<span class="sig-prename descclassname"><span class="pre">flight_update.</span></span><span class="sig-name descname"><span class="pre">moveOldFiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rootdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_update.moveOldFiles" title="Link to this definition"></a></dt>
-<dd><p>Move the written files from the root directory given in the config file to the archive</p>
-<p>If keyword DELETE given instead of archive then the flight records will be deleted after being pushed</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="flight_update.openConfig">
-<span class="sig-prename descclassname"><span class="pre">flight_update.</span></span><span class="sig-name descname"><span class="pre">openConfig</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flight_update.openConfig" title="Link to this definition"></a></dt>
-<dd><p>Function to open configuration file and initialise paths to relevant directories.</p>
-<dl class="simple">
-<dt>Returns: </dt><dd><ol class="arabic simple">
-<li><p>Path to flights to be pushed to ElasticSearch</p></li>
-<li><p>Path to directory for moving written flights</p></li>
-<li><p>Path to logging file</p></li>
-</ol>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="flight_update.reindex">
-<span class="sig-prename descclassname"><span class="pre">flight_update.</span></span><span class="sig-name descname"><span class="pre">reindex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_update.reindex" title="Link to this definition"></a></dt>
-<dd><p>Running a re-index using the source and destination from settings_file.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="flight_update.updateFlights">
-<span class="sig-prename descclassname"><span class="pre">flight_update.</span></span><span class="sig-name descname"><span class="pre">updateFlights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_update.updateFlights" title="Link to this definition"></a></dt>
-<dd><p>Update flights using resolve_link() from flightpipe/flight_client module.</p>
-</dd></dl>
-
+<section id="flight-update">
+<h2>Flight Update<a class="headerlink" href="#flight-update" title="Link to this heading"></a></h2>
 </section>
-<section id="module-flight_client">
-<span id="elastic-search-flight-client"></span><h2>Elastic Search Flight Client<a class="headerlink" href="#module-flight_client" title="Link to this heading"></a></h2>
-<dl class="simple">
-<dt>— Elastic Client —</dt><dd><ul class="simple">
-<li><p>Extract all items from flight finder index by organisation</p></li>
-<li><p>Save flight numbers to array - return array</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py class">
-<dt class="sig sig-object py" id="flight_client.ESFlightClient">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flight_client.</span></span><span class="sig-name descname"><span class="pre">ESFlightClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rootdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">es_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'settings.json'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_client.ESFlightClient" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleClient</span></code></p>
-<p>Connects to an elasticsearch instance and exports the
-documents to elasticsearch.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="flight_client.ESFlightClient.add_field">
-<span class="sig-name descname"><span class="pre">add_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fieldname</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_client.ESFlightClient.add_field" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="flight_client.ESFlightClient.check_ptcode">
-<span class="sig-name descname"><span class="pre">check_ptcode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ptcode</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_client.ESFlightClient.check_ptcode" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="flight_client.ESFlightClient.check_set">
-<span class="sig-name descname"><span class="pre">check_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paths</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_client.ESFlightClient.check_set" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="flight_client.ESFlightClient.obtain_field">
-<span class="sig-name descname"><span class="pre">obtain_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fieldnames</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_client.ESFlightClient.obtain_field" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="flight_client.ESFlightClient.preprocess_records">
-<span class="sig-name descname"><span class="pre">preprocess_records</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_client.ESFlightClient.preprocess_records" title="Link to this definition"></a></dt>
-<dd><p>Blank preprocessor method - override with preprocessing steps for specific
-client use-cases.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="flight_client.ESFlightClient.push_flights">
-<span class="sig-name descname"><span class="pre">push_flights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_client.ESFlightClient.push_flights" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="flight_client.ESFlightClient.reindex">
-<span class="sig-name descname"><span class="pre">reindex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_client.ESFlightClient.reindex" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="flight_client.ESFlightClient.sort_codes">
-<span class="sig-name descname"><span class="pre">sort_codes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flight_client.ESFlightClient.sort_codes" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="flight_client.resolve_link">
-<span class="sig-prename descclassname"><span class="pre">flight_client.</span></span><span class="sig-name descname"><span class="pre">resolve_link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_client.resolve_link" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
+<section id="elastic-search-flight-client">
+<h2>Elastic Search Flight Client<a class="headerlink" href="#elastic-search-flight-client" title="Link to this heading"></a></h2>
 </section>
 <section id="module-simple_client">
 <span id="flight-client-wrapper"></span><h2>Flight Client Wrapper<a class="headerlink" href="#module-simple_client" title="Link to this heading"></a></h2>
@@ -323,59 +172,11 @@ client use-cases.</p>
 <dd></dd></dl>
 
 </section>
-<section id="module-write_flights">
-<span id="write-flights"></span><h2>Write Flights<a class="headerlink" href="#module-write_flights" title="Link to this heading"></a></h2>
-<dl class="simple">
-<dt>— Get Archive Metadata —</dt><dd><ul class="simple">
-<li><p>Extract data from archive files</p></li>
-<li><p>Copied from elastic_scrapers/scraper_code</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py class">
-<dt class="sig sig-object py" id="write_flights.FlightConverter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">write_flights.</span></span><span class="sig-name descname"><span class="pre">FlightConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rootdir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#write_flights.FlightConverter" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="write_flights.FlightConverter.convert">
-<span class="sig-name descname"><span class="pre">convert</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#write_flights.FlightConverter.convert" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="write_flights.FlightConverter.convertFile">
-<span class="sig-name descname"><span class="pre">convertFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fileout</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#write_flights.FlightConverter.convertFile" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="write_flights.FlightConverter.createCatalog">
-<span class="sig-name descname"><span class="pre">createCatalog</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#write_flights.FlightConverter.createCatalog" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="write_flights.FlightConverter.createCollections">
-<span class="sig-name descname"><span class="pre">createCollections</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#write_flights.FlightConverter.createCollections" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="write_flights.FlightConverter.findFilesRecursive">
-<span class="sig-name descname"><span class="pre">findFilesRecursive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#write_flights.FlightConverter.findFilesRecursive" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="write_flights.addList">
-<span class="sig-prename descclassname"><span class="pre">write_flights.</span></span><span class="sig-name descname"><span class="pre">addList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#write_flights.addList" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
+<section id="write-flights">
+<h2>Write Flights<a class="headerlink" href="#write-flights" title="Link to this heading"></a></h2>
 </section>
-<section id="module-moles">
-<span id="get-moles"></span><h2>Get Moles<a class="headerlink" href="#module-moles" title="Link to this heading"></a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="moles.update_moles">
-<span class="sig-prename descclassname"><span class="pre">moles.</span></span><span class="sig-name descname"><span class="pre">update_moles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thorough</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moles.update_moles" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
+<section id="get-moles">
+<h2>Get Moles<a class="headerlink" href="#get-moles" title="Link to this heading"></a></h2>
 </section>
 </section>
 

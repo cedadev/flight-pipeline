@@ -91,11 +91,11 @@ Up to the first 1000 flights will be plotted on the map with most recent on top.
 </li>
 <li class="toctree-l1"><a class="reference internal" href="core/doc.html">Source Code Documentation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="core/doc.html#project-description">Project description</a></li>
-<li class="toctree-l2"><a class="reference internal" href="core/doc.html#module-flight_update">Flight Update</a></li>
-<li class="toctree-l2"><a class="reference internal" href="core/doc.html#module-flight_client">Elastic Search Flight Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core/doc.html#flight-update">Flight Update</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core/doc.html#elastic-search-flight-client">Elastic Search Flight Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="core/doc.html#module-simple_client">Flight Client Wrapper</a></li>
-<li class="toctree-l2"><a class="reference internal" href="core/doc.html#module-write_flights">Write Flights</a></li>
-<li class="toctree-l2"><a class="reference internal" href="core/doc.html#module-moles">Get Moles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core/doc.html#write-flights">Write Flights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core/doc.html#get-moles">Get Moles</a></li>
 </ul>
 </li>
 </ul>
@@ -125,7 +125,7 @@ Up to the first 1000 flights will be plotted on the map with most recent on top.
 </ul>
 </div></blockquote>
 <p><strong>OR</strong></p>
-<p><a href="#id1"><span class="problematic" id="id2">**</span></a>2. Install by cloning GitHub repository</p>
+<p><strong>2. Install by cloning GitHub repository</strong></p>
 <blockquote>
 <div><ul class="simple">
 <li><p>Clone the repository from github by running <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/cedadev/flight-pipeline.git</span></code></p></li>
@@ -145,9 +145,11 @@ Up to the first 1000 flights will be plotted on the map with most recent on top.
 <p><strong>1. Use stac_template to write new records</strong>
 Follow the STAC template json file to create new flight records (more details further down)</p>
 <p><strong>2. Configure dirconfig file</strong>
-Add on lines 2 and 4 the directory paths to where your new flights to push are stored, and where the pushed flights should go once they have been uploaded to the index (store them or write DELETE to remove them from the local system)</p>
+Add on lines 2 and 4 the directory paths to where your new flights to push are stored, and where the pushed flights should go once they have been uploaded to the index (store them or write DELETE to remove them from the local system). Update line 6 with a directory path to a logfile.</p>
 <p><strong>3. Push New Flights</strong>
-Run with command <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">flight_update.py</span> <span class="pre">add</span></code> with a filled in dirconfig file to push new records to the index</p>
+Fill in the dirconfig file first to push new records to the index.</p>
+<p>Run with command <code class="docutils literal notranslate"><span class="pre">flight-pipeline</span> <span class="pre">flight-update</span></code> in order to get prompts in the console.</p>
+<p>Or run with command <code class="docutils literal notranslate"><span class="pre">flight-pipeline</span> <span class="pre">flight-update</span> <span class="pre">--archive_path</span> <span class="pre">../../</span> <span class="pre">--flights_dir</span> <span class="pre">../../</span> <span class="pre">--add_mode</span> <span class="pre">y</span> <span class="pre">--update_mode</span> <span class="pre">n</span> <span class="pre">--update_id</span> <span class="pre">n</span></code> where all the arguments are filled in already</p>
 </section>
 <section id="update-existing-flights">
 <h2>Update Existing Flights<a class="headerlink" href="#update-existing-flights" title="Link to this heading"></a></h2>
