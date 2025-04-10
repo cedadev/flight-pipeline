@@ -91,11 +91,11 @@ Up to the first 1000 flights will be plotted on the map with most recent on top.
 </li>
 <li class="toctree-l1"><a class="reference internal" href="core/doc.html">Source Code Documentation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="core/doc.html#project-description">Project description</a></li>
-<li class="toctree-l2"><a class="reference internal" href="core/doc.html#flight-update">Flight Update</a></li>
-<li class="toctree-l2"><a class="reference internal" href="core/doc.html#elastic-search-flight-client">Elastic Search Flight Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core/doc.html#module-flight_update">Flight Update</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core/doc.html#module-flight_client">Elastic Search Flight Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="core/doc.html#module-simple_client">Flight Client Wrapper</a></li>
-<li class="toctree-l2"><a class="reference internal" href="core/doc.html#write-flights">Write Flights</a></li>
-<li class="toctree-l2"><a class="reference internal" href="core/doc.html#get-moles">Get Moles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core/doc.html#module-write_flights">Write Flights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core/doc.html#module-moles">Get Moles</a></li>
 </ul>
 </li>
 </ul>
@@ -146,7 +146,18 @@ Up to the first 1000 flights will be plotted on the map with most recent on top.
 Follow the STAC template json file to create new flight records (more details further down)</p>
 <p><strong>2. Configure dirconfig file</strong>
 Add on lines 2 and 4 the directory paths to where your new flights to push are stored, and where the pushed flights should go once they have been uploaded to the index (store them or write DELETE to remove them from the local system). Update line 6 with a directory path to a logfile.</p>
-<p><strong>3. Push New Flights</strong>
+<p><strong>3. Set up environment variables</strong></p>
+<p>In order to run the <code class="docutils literal notranslate"><span class="pre">flight-pipeline</span></code> project, you will need the following variables in your environment.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>CONFIG_FILE=/path/to/your/dir/config/dirconfig</p></li>
+<li><p>STAC_TEMPLATE=/path/to/your/dir/config/stac_template.json</p></li>
+<li><p>SETTINGS_FILE=/path/to/your/dir/config/settings.json</p></li>
+</ul>
+</div></blockquote>
+<p>In <code class="docutils literal notranslate"><span class="pre">bash</span></code> you can run:
+<code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">CONFIG_FILE=/path/to/your/dir/config/dirconfig</span></code></p>
+<p><strong>4. Push New Flights</strong>
 Fill in the dirconfig file first to push new records to the index.</p>
 <p>Run with command <code class="docutils literal notranslate"><span class="pre">flight-pipeline</span> <span class="pre">flight-update</span></code> in order to get prompts in the console.</p>
 <p>Or run with command <code class="docutils literal notranslate"><span class="pre">flight-pipeline</span> <span class="pre">flight-update</span> <span class="pre">--archive_path</span> <span class="pre">../../</span> <span class="pre">--flights_dir</span> <span class="pre">../../</span> <span class="pre">--add_mode</span> <span class="pre">y</span> <span class="pre">--update_mode</span> <span class="pre">n</span> <span class="pre">--update_id</span> <span class="pre">n</span></code> where all the arguments are filled in already</p>
