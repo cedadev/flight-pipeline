@@ -6,28 +6,17 @@ __copyright__ = "Copyright 2025 United Kingdom Research and Innovation"
 import logging
 import os
 
-def setup_logging(enable_logging=True, console_logging=True) -> None:
+os.environ["CONFIG_FILE"] = "../config/dirconfig"
+os.environ["SETTINGS_FILE"] = "../config/settings.json"
+os.environ["STAC_TEMPLATE"] = "../config/stac_template.json"
+
+def setup_logging(enable_logging=True, console_logging=True, log_file = "") -> None:
     """
     Sets up logging configuration. If `enable_logging` is False, no logging will occur.
     
     :param enable_logging: Flag to enable/disable logging.
     """
 
-    log_file = ""
-
-    try:
-
-        file = os.environ.get("CONFIG_FILE", None) or "dirconfig"
-
-        with open(file) as f: # 'r' is default if not specified.
-            content = [r.strip() for r in f.readlines()] # Removes the '\n' from all lines
-
-        log_file = content[5].replace('\n','')
-
-    except FileNotFoundError:
-        print("Error: Config file not found.")
-    
-        return
 
     if log_file == '':
         print("Error: Please fill in the third directory in dirconfig file")
@@ -52,10 +41,32 @@ def setup_logging(enable_logging=True, console_logging=True) -> None:
         #NOTSET for no alerts at all
 
 
-enable_logging = True
+def get_config():
+    """
+    Function to get logging info from config file
+    """
+
+    file = os.environ.get("CONFIG_FILE", None) or "dirconfig"
+
+    try:
+
+        with open(file) as f: # 'r' is default if not specified.
+            content = [r.strip() for r in f.readlines()] # Removes the '\n' from all lines
+    
+    except FileNotFoundError:
+        print("Error: Config file not found.")
+    
+        return
+
+
+    return content[5].replace('\n',''), content[7].replace('\n',''), content[9].replace('\n','')
+
+
+config_info = get_config()
+log_file, enable_logging, console_logging = config_info[0], config_info[1], config_info[2]
 
 # Set up logging with a flag (True to enable logging, False to disable logging)
-setup_logging(enable_logging)  # Change to False to disable logging
+setup_logging(enable_logging, console_logging, log_file)  # Change to False to disable logging
 
 logger = logging.getLogger(__name__)
 
