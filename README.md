@@ -8,11 +8,23 @@ Repository for python code to concatenate data sources and construct new flight 
   - Remove or archive pushed records on local system
 
 ## Installation:
-  - Clone the repository from github
-  - Install requirements into a local virtual environment:
-    - `python -m venv local`
-    - `source local/bin/activate`
-    - `pip install -r requirements.txt`
+
+You can either install the ``PyPi`` package through ``pip`` or clone the GitHub repository. The two options can be found below.
+
+### 1. Install using pip
+
+  - Run ``pip install ceda-flight-pipeline``
+  - Install requirements into a local virtual environment using ``Poetry``:
+    - ``poetry install``
+  - Configure dirconfig with relative paths
+
+###OR###
+
+### 2. Install by cloning GitHub repository
+
+  - Clone the repository from github by running ``git clone https://github.com/cedadev/flight-pipeline.git``
+  - Install requirements into a local virtual environment using ``Poetry``:
+     - ``poetry install``
   - Configure dirconfig with relative paths
 
 ## Running the program
@@ -21,10 +33,12 @@ Repository for python code to concatenate data sources and construct new flight 
 Follow the STAC template json file to create new flight records (more details further down)
 
 ### 2. Configure dirconfig file
-Add on lines 2 and 4 the directory paths to where your new flights to push are stored, and where the pushed flights should go once they have been uploaded to the index (store them or write DELETE to remove them from the local system)
+Add on lines 2 and 4 the directory paths to where your new flights to push are stored, and where the pushed flights should go once they have been uploaded to the index (store them or write DELETE to remove them from the local system). Update line 6 with a directory path to a logfile.
 
 ### 3. Push New Flights
-Run with command `python flight_update.py add` with a filled in dirconfig file to push new records to the index
+Run with command `flight-pipeline flight-update` with a filled in dirconfig file to push new records to the index.
+
+Or run with command `flight-pipeline flight-update --archive_path ../../ --flights_dir ../../ --add_mode true --update_mode false --update_id false`
 
 ## Update Existing Flights
 Note: In case of repair or adjustment to existing records, the individual records can be updated in place.
