@@ -49,7 +49,7 @@ Add on lines 2 and 4 the directory paths to where your new flights to push are s
 ### 3. Push New Flights
 Run with command `flight-pipeline flight-update` with a filled in dirconfig file to push new records to the index.
 
-Or run with command `flight-pipeline flight-update --archive_path ../../ --flights_dir ../../ --add_mode true --update_mode false --update_id false`
+Or run with command `flight-pipeline flight-update --archive_path ../../ --flights_dir ../../ --add_mode y --update_mode n --update_id n`
 
 ## Update Existing Flights
 Note: In case of repair or adjustment to existing records, the individual records can be updated in place.
