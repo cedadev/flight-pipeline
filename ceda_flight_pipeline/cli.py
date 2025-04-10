@@ -6,7 +6,6 @@ __copyright__ = "Copyright 2025 United Kingdom Research and Innovation"
 import click
 import sys
 
-#from ceda_flight_pipeline.flight_update import addFlights, updateFlights, openConfig, reindex
 from ceda_flight_pipeline.logger import logger
 import logging
 import os
@@ -143,7 +142,7 @@ def main():
 
 def flight_update(archive_path, flights_dir, add_mode, update_mode, update_id):
     """
-    Main function running the flight_update.py script based on the given command line parameters
+    Main function running the flight update scripts based on the given command line parameters
     """
     IS_FORCE = False
     REPUSH = False

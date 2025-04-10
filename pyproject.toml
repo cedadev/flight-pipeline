@@ -27,5 +27,4 @@ requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [project.scripts]
-flightpipe = "ceda_flight_pipeline.flight_update:main"
 flight-pipeline = "ceda_flight_pipeline.cli:main"
