@@ -14,7 +14,6 @@ from elasticsearch.helpers import bulk
 from ceda_flight_pipeline.logger import logger
 
 from ceda_flight_pipeline.simple_client import SimpleClient, gen_id
-from ceda_flight_pipeline.logger import setup_logging
 
 from datetime import datetime
 
@@ -53,13 +52,13 @@ class ESFlightClient(SimpleClient):
     documents to elasticsearch.
     """
 
-    def __init__(self, rootdir, es_config='settings.json'):
+    def __init__(self, rootdir, es_config=os.environ.get("SETTINGS_FILE")):
         self.rootdir = rootdir
         logger.info("Info: Initialising ES Flight Client")
 
         super().__init__("stac-flightfinder-items-test", es_config=es_config)
 
-        with open('stac_template.json') as f:
+        with open(os.environ.get("STAC_TEMPLATE")) as f:
             logger.info("Info: Reading stac templace JSON file")
             self.required_keys = json.load(f).keys()
 
