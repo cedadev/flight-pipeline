@@ -18,7 +18,7 @@ You can either install the ``PyPi`` package through ``pip`` or clone the GitHub 
     - ``poetry install``
   - Configure dirconfig with relative paths
 
-###OR###
+### OR ###
 
 ### 2. Install by cloning GitHub repository
 
