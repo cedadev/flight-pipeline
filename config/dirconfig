@@ -4,3 +4,7 @@
 /home/users/icircu/test-flights/
 # Logging File
 /home/users/icircu/test-flights/logging
+# Set logging to file - False will disable logging
+logger = True
+# Set logging to console - False will disable console logging
+console_logger = False
