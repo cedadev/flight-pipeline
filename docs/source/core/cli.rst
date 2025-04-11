@@ -35,6 +35,12 @@ When running with the above command, the user will be prompted with the followin
 - ``Set update mode (y/n) [n]:``: ``bool`` defaults to ``False``
 - ``Flight id to update [n]:``: ``string`` defaults to ``False``
 
+.. note::
+
+   Run with command ``flight-pipeline flight-update`` in order to get prompts in the console.
+
+   Or run with command ``flight-pipeline flight-update --archive_path ../../ --flights_dir ../../ --add_mode y --update_mode n --update_id n`` where all the arguments are filled in already
+
 
 When running the help command ``flight-pipeline --help``
 ========================================================
