@@ -132,8 +132,11 @@ def reindex(new_index):
     fclient = ESFlightClient("", os.environ.get("SETTINGS_FILE", None))
     fclient.reindex(new_index)
 
-
-root, archive = openConfig()
+try:
+    root, archive = openConfig()
+except: # in case no env variable is set for the config file
+    root = ""
+    archive = ""
 
 
 @click.group()
