@@ -83,6 +83,8 @@ In ``bash`` you can run:
 
 **4. Push New Flights**
 
+Set up paths in dirconfig file in order to push new flights to the index.
+
 .. note::
 
    Run with command ``flight-pipeline flight-update`` in order to get prompts in the console.
