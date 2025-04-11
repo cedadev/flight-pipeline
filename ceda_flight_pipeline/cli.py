@@ -178,12 +178,42 @@ def main():
     help="New elasticsearch index to move to",
     prompt="Flight id to update",
 )
-def flight_update(archive_path, flights_dir, add_mode, update_mode, update_id):
+# @click.option(
+#     "--config_file",
+#     default="n",
+#     type=str,
+#     help="Path to config file",
+# )
+# @click.option(
+#     "--settings_file",
+#     default="n",
+#     type=str,
+#     help="Path to settings file",
+# )
+# @click.option(
+#     "--stac_template",
+#     default="n",
+#     type=str,
+#     help="Path to STAC template",
+# )
+
+def flight_update(archive_path, flights_dir, add_mode, update_mode, update_id): #,config_file, settings_file, stac_template):
     """
     Main function running the flight update scripts based on the given command line parameters
     """
     IS_FORCE = False
     REPUSH = False
+
+
+    # if config_file:
+    #     os.environ["CONFIG_FILE"] = config_file
+
+    # if settings_file:
+    #     os.environ["SETTINGS_FILE"] = settings_file
+    
+    # if stac_template:
+    #     os.environ["STAC_TEMPLATE"] = stac_template
+
 
     # Convert add_mode and update_mode from strings to booleans
     add_mode = str2bool(add_mode)
