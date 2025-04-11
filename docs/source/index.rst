@@ -82,11 +82,12 @@ In ``bash`` you can run:
 ``export CONFIG_FILE=/path/to/your/dir/config/dirconfig``
 
 **4. Push New Flights**
-Fill in the dirconfig file first to push new records to the index.
 
-Run with command ``flight-pipeline flight-update`` in order to get prompts in the console. 
+.. note::
 
-Or run with command ``flight-pipeline flight-update --archive_path ../../ --flights_dir ../../ --add_mode y --update_mode n --update_id n`` where all the arguments are filled in already
+   Run with command ``flight-pipeline flight-update`` in order to get prompts in the console.
+
+   Or run with command ``flight-pipeline flight-update --archive_path ../../ --flights_dir ../../ --add_mode y --update_mode n --update_id n`` where all the arguments are filled in already
 
 Update Existing Flights
 -----------------------
