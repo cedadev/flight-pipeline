@@ -1,6 +1,8 @@
 # flight-pipeline
 Repository for python code to concatenate data sources and construct new flight records for CEDA flight-finder
 
+Documentation can be found here: https://cedadev.github.io/flight-pipeline
+
 ## Objectives: 
   - Mechanism for uploading new flights to stac index
   - Use ES Client to determine array of ids that currently exists in the index
@@ -30,13 +32,13 @@ You can either install the ``PyPi`` package through ``pip`` or clone the GitHub 
 ## Setting up environment variables
 In order to run the `flight-pipeline` project, you will need the following variables in your environment.
 ```
-CONFIG_FILE=/path/to/your/dir/config/dirconfig
+FLIGHT_CONFIG=/path/to/your/dir/config/dirconfig
 STAC_TEMPLATE=/path/to/your/dir/config/stac_template.json
-SETTINGS_FILE=/path/to/your/dir/config/settings.json
+FLIGHT_CONNECTION=/path/to/your/dir/config/settings.json
 ```
 
 In `bash` you can run:
-`export CONFIG_FILE=/path/to/your/dir/config/dirconfig`
+`export FLIGHT_CONFIG=/path/to/your/dir/config/dirconfig`
 
 ## Running the program
 
@@ -49,12 +51,7 @@ Add on lines 2 and 4 the directory paths to where your new flights to push are s
 ### 3. Push New Flights
 Run with command `flight-pipeline flight-update` with a filled in dirconfig file to push new records to the index.
 
-Or run with command `flight-pipeline flight-update --archive_path ../../ --flights_dir ../../ --add_mode y --update_mode n --update_id n`
-
-## Update Existing Flights
-Note: In case of repair or adjustment to existing records, the individual records can be updated in place.
-
-Run with command `python flight_update.py update <pyfile>`, where __pyfile__ is a python file containing an __update__ function that can be applied to each record in elasticsearch.
+Or run with command `flight-pipeline flight-update --archive_path ../../ --new_flights_dir ../../`
 
 ## STAC Template
 From the template, the following should be filled in:
