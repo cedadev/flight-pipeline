@@ -5,3 +5,4 @@ localcache/
 *pyc
 build/
 dist/
+add/

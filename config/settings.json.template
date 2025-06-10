@@ -1,11 +1,8 @@
 {
     "hosts": [
-        "es9.ceda.ac.uk:9200"
+        "https://elasticsearch.ceda.ac.uk"
     ],
     "headers": {
         "x-api-key": ""
-    },
-    "use_ssl": 1,
-    "verify_certs": 0,
-    "ssl_show_warn": 0
+    }
 }
