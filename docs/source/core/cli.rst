@@ -6,6 +6,11 @@ Instructions
 ============
 The Command Line Interface (CLI) has been created with the ``click`` Python package. It provides an easy way to build and handle command line arguments.
 
+.. note::
+
+    As of v1.2.1, the STAC TEMPLATE has a default value embedded in the package, so does not need to be provided unless you are applying additional constraints to the records.
+
+
 The standard command to run the flight pipeline is ``flight-pipeline flight-upload``. The following arguments can be supplied via the CLI, or using other methods as shown:
  
 - ``new_flights_dir``: Directory holding the flights to be pushed. This can also be set in the ``FLIGHT_CONFIG`` line 2. See below for details of how to use the config file.
