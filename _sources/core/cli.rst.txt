@@ -6,40 +6,27 @@ Instructions
 ============
 The Command Line Interface (CLI) has been created with the ``click`` Python package. It provides an easy way to build and handle command line arguments.
 
-The user can change the following options:
+The standard command to run the flight pipeline is ``flight-pipeline flight-upload``. The following arguments can be supplied via the CLI, or using other methods as shown:
+ 
+- ``new_flights_dir``: Directory holding the flights to be pushed. This can also be set in the ``FLIGHT_CONFIG`` line 2. See below for details of how to use the config file.
 
-- ``archive_path``: the path where the flights will be pushed
+- ``archive_path``: Directory to cache flights that have been pushed to Elasticsearch/STAC. This can also be set in the ``FLIGHT_CONFIG``, line 4.
 
-- ``flights_path``: the path to where the flights to be pushed are currently located
+- ``update``: Add to update the ES index using content from the archive directory. For example if an attribute has changed, this can be used to reupload the existing record.
 
-- ``logging``: ``True`` or ``False``, this will enable or disable *logging to file*
+- ``reindex``: Used to migrate the current index.
 
-- ``console_logging``: ``True`` or ``False``, this will enable or disable *logging to console*
+- ``config_file``: Specify the location of the config file. To avoid a long command string, this can be set using the ``$FLIGHT_CONFIG`` environment variable instead.
 
-- ``add_mode``: ``bool`` where the mode is set to add flights to archive
+- ``settings_file``: Elasticsearch connection settings file path. To avoid a long command string, this can be set using the ``$FLIGHT_CONNECTION`` environment variable instead.
 
-- ``update_mode``: ``bool`` where mode is set to update the archived flights
+- ``stac_template``: STAC template to apply to all new records. To avoid a long command string, this can be set using the ``$STAC_TEMPLATE`` environment variable instead.
 
+- ``verbose``: Level of logging (``-v`` gives info messages, ``-vv`` gives debug messages)
 
-How to run the flightpipe:
+Run with command ``flight-pipeline flight-update`` if all above values are configured using environment variables etc.
 
-``python cli.py run-flight-update``
-
-When running with the above command, the user will be prompted with the following:
-
-- ``Enable logging (y/n) [y]:``: ``bool`` defaults to ``True``
-- ``Log to console (y/n) [n]:``: ``bool`` defaults to ``False``
-- ``Set archive path [../..]:``: ``string`` defaults to value in config file ``dirconfig``
-- ``Set path to flights to be pushed [../..]:``: ``string`` defaults to value in config file ``dirconfig``
-- ``Set mode to add flights (y/n) [y]:``: ``bool`` defaults to ``True``
-- ``Set update mode (y/n) [n]:``: ``bool`` defaults to ``False``
-- ``Flight id to update [n]:``: ``string`` defaults to ``False``
-
-.. note::
-
-   Run with command ``flight-pipeline flight-update`` in order to get prompts in the console.
-
-   Or run with command ``flight-pipeline flight-update --archive_path ../../ --flights_dir ../../ --add_mode y --update_mode n --update_id n`` where all the arguments are filled in already
+Or run with command ``flight-pipeline flight-update --archive_path ../../ --flights_dir ../../ --add_mode y --update_mode n --update_id n`` where all the arguments are filled in already
 
 
 When running the help command ``flight-pipeline --help``

@@ -50,6 +50,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#flight-update">Flight Update</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-flight_client">Elastic Search Flight Client</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#flight_client.ESFlightClient"><code class="docutils literal notranslate"><span class="pre">ESFlightClient</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flight_client.ESFlightClient.addFlights"><code class="docutils literal notranslate"><span class="pre">ESFlightClient.addFlights()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flight_client.ESFlightClient.add_field"><code class="docutils literal notranslate"><span class="pre">ESFlightClient.add_field()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flight_client.ESFlightClient.check_ptcode"><code class="docutils literal notranslate"><span class="pre">ESFlightClient.check_ptcode()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flight_client.ESFlightClient.check_set"><code class="docutils literal notranslate"><span class="pre">ESFlightClient.check_set()</span></code></a></li>
@@ -58,15 +59,16 @@
 <li class="toctree-l4"><a class="reference internal" href="#flight_client.ESFlightClient.push_flights"><code class="docutils literal notranslate"><span class="pre">ESFlightClient.push_flights()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flight_client.ESFlightClient.reindex"><code class="docutils literal notranslate"><span class="pre">ESFlightClient.reindex()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flight_client.ESFlightClient.sort_codes"><code class="docutils literal notranslate"><span class="pre">ESFlightClient.sort_codes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flight_client.ESFlightClient.updateFlights"><code class="docutils literal notranslate"><span class="pre">ESFlightClient.updateFlights()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#flight_client.moveOldFiles"><code class="docutils literal notranslate"><span class="pre">moveOldFiles()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#flight_client.resolve_link"><code class="docutils literal notranslate"><span class="pre">resolve_link()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-simple_client">Flight Client Wrapper</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#simple_client.ResponseException"><code class="docutils literal notranslate"><span class="pre">ResponseException</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#simple_client.SimpleClient"><code class="docutils literal notranslate"><span class="pre">SimpleClient</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#simple_client.SimpleClient.establish_id"><code class="docutils literal notranslate"><span class="pre">SimpleClient.establish_id()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#simple_client.SimpleClient.get_size"><code class="docutils literal notranslate"><span class="pre">SimpleClient.get_size()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#simple_client.SimpleClient.preprocess_records"><code class="docutils literal notranslate"><span class="pre">SimpleClient.preprocess_records()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#simple_client.SimpleClient.process_records"><code class="docutils literal notranslate"><span class="pre">SimpleClient.process_records()</span></code></a></li>
@@ -144,10 +146,16 @@ Up to the first 1000 flights will be plotted on the map with most recent on top.
 </dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="flight_client.ESFlightClient">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flight_client.</span></span><span class="sig-name descname"><span class="pre">ESFlightClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rootdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">es_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_client.ESFlightClient" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flight_client.</span></span><span class="sig-name descname"><span class="pre">ESFlightClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">es_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stac_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_client.ESFlightClient" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleClient</span></code></p>
 <p>Connects to an elasticsearch instance and exports the
 documents to elasticsearch.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="flight_client.ESFlightClient.addFlights">
+<span class="sig-name descname"><span class="pre">addFlights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">archive</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rootdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repush</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">move_files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_client.ESFlightClient.addFlights" title="Link to this definition"></a></dt>
+<dd><p>Function for adding flights</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="flight_client.ESFlightClient.add_field">
 <span class="sig-name descname"><span class="pre">add_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fieldname</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_client.ESFlightClient.add_field" title="Link to this definition"></a></dt>
@@ -190,6 +198,19 @@ client use-cases.</p>
 <span class="sig-name descname"><span class="pre">sort_codes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flight_client.ESFlightClient.sort_codes" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="flight_client.ESFlightClient.updateFlights">
+<span class="sig-name descname"><span class="pre">updateFlights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_client.ESFlightClient.updateFlights" title="Link to this definition"></a></dt>
+<dd><p>Update flights using resolve_link() from flightpipe/flight_client module.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="flight_client.moveOldFiles">
+<span class="sig-prename descclassname"><span class="pre">flight_client.</span></span><span class="sig-name descname"><span class="pre">moveOldFiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rootdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_client.moveOldFiles" title="Link to this definition"></a></dt>
+<dd><p>Move the written files from the root directory given in the config file to the archive</p>
+<p>If keyword DELETE given instead of archive then the flight records will be deleted after being pushed</p>
 </dd></dl>
 
 <dl class="py function">
@@ -210,15 +231,9 @@ as even with 0 hits returned there should still be an empty ‘hits’ list here
 
 <dl class="py class">
 <dt class="sig sig-object py" id="simple_client.SimpleClient">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simple_client.</span></span><span class="sig-name descname"><span class="pre">SimpleClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">es_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simple_client.SimpleClient" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simple_client.</span></span><span class="sig-name descname"><span class="pre">SimpleClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">es_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simple_client.SimpleClient" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Simple Elasticsearch-Python client for bulk operations</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="simple_client.SimpleClient.establish_id">
-<span class="sig-name descname"><span class="pre">establish_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simple_client.SimpleClient.establish_id" title="Link to this definition"></a></dt>
-<dd><p>Add _id and other required fields before pushing new entries.</p>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="simple_client.SimpleClient.get_size">
 <span class="sig-name descname"><span class="pre">get_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simple_client.SimpleClient.get_size" title="Link to this definition"></a></dt>
