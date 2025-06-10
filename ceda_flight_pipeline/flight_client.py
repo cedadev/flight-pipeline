@@ -27,7 +27,7 @@ import urllib3
 urllib3.disable_warnings()
 
 logger = logging.getLogger(__name__)
-from ceda_flight_pipeline.utils import logstream
+from ceda_flight_pipeline.utils import logstream, STAC_TEMPLATE
 logger.addHandler(logstream)
 logger.propagate = False
 
@@ -78,8 +78,10 @@ class ESFlightClient(SimpleClient):
     documents to elasticsearch.
     """
 
-    def __init__(self, index, es_config: str, stac_template: str):
+    def __init__(self, index, es_config: str, stac_template: str = None):
         logger.info("Initialising ES Flight Client")
+
+        stac_template = stac_template or STAC_TEMPLATE
 
         super().__init__(index, es_config=es_config)
 

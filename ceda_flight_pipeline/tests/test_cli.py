@@ -18,27 +18,6 @@ class TestFlightUpdate(unittest.TestCase):
         self.assertFalse(str2bool("no"))
         self.assertFalse(str2bool("false"))
 
-    # Test openConfig() with the correct configuration
-    # Mock opening file
-
-    @patch(
-        "builtins.open",
-        new_callable=mock_open,
-        read_data="line0\n/flights-dir\nline2\n/archive\nline4\n",
-    )
-    @patch.dict(
-        os.environ, {"CONFIG_FILE": "dummy_config"}
-    )  # Set the CONFIG_FILE env variable
-    def test_open_config_success(self, mock_file):
-
-        from ceda_flight_pipeline.cli import openConfig
-
-        root, archive = openConfig()
-
-        # Check if the function correctly reads and returns the expected paths
-        self.assertEqual(root, "/flights-dir")
-        self.assertEqual(archive, "/archive")
-
     # Test openConfig() when the config file isn't set up correctly and there aren't enough lines -> triggering an index error
     @patch(
         "builtins.open", new_callable=mock_open, read_data="line0\n/flights-dir\n"

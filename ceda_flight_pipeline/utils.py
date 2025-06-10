@@ -11,6 +11,20 @@ logstream = logging.StreamHandler()
 formatter = logging.Formatter('%(levelname)s [%(name)s]: %(message)s')
 logstream.setFormatter(formatter)
 
+STAC_TEMPLATE = {
+    "id": None,
+    "es_id": None,
+    "type" : "Feature",
+    "stac_version": "1.0.0",
+    "stac_extensions":[""],
+    "description_path":None,
+    "collection":None,
+    "geometry": None,
+    "properties":None,
+    "assets":{},
+    "links":[]
+}
+
 def jsonWrite(path, file, content):
     if not os.path.exists(path):
         os.makedirs(path)

@@ -154,7 +154,7 @@ def flight_update(
         stac_index=stac_index,
         cfg_file=config_file)
     
-    fclient = ESFlightClient(stac_index, settings_file, stac_template)
+    fclient = ESFlightClient(stac_index, settings_file, stac_template=stac_template)
 
     if add:
         # Ensure archive_path and new_flights_dir are not empty
