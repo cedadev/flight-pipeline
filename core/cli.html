@@ -89,6 +89,10 @@
 <section id="instructions">
 <h2>Instructions<a class="headerlink" href="#instructions" title="Link to this heading"></a></h2>
 <p>The Command Line Interface (CLI) has been created with the <code class="docutils literal notranslate"><span class="pre">click</span></code> Python package. It provides an easy way to build and handle command line arguments.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As of v1.2.1, the STAC TEMPLATE has a default value embedded in the package, so does not need to be provided unless you are applying additional constraints to the records.</p>
+</div>
 <p>The standard command to run the flight pipeline is <code class="docutils literal notranslate"><span class="pre">flight-pipeline</span> <span class="pre">flight-upload</span></code>. The following arguments can be supplied via the CLI, or using other methods as shown:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">new_flights_dir</span></code>: Directory holding the flights to be pushed. This can also be set in the <code class="docutils literal notranslate"><span class="pre">FLIGHT_CONFIG</span></code> line 2. See below for details of how to use the config file.</p></li>
