@@ -1,6 +1,6 @@
 [project]
 name = "ceda-flight-pipeline"
-version = "1.2.1"
+version = "1.2.2"
 description = "The flight-pipeline mechanism allows for uploading new flights to the STAC index using the ElasticSearch client. The flight-pipeline scripts push new records that are not currently in the index and can remove or archive pushed records on the local system. "
 authors = [
     {name = "Ioana Circu",email = "ioana.circu@stfc.ac.uk"},
