@@ -46,7 +46,12 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Command Line Tool</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#instructions">Instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#instructions">Instructions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#using-environment-variables">Using environment variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-flags-with-the-config-file">Using flags with the config file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#without-using-config-file">Without using config file</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#when-running-the-help-command-flight-pipeline-help">When running the help command <code class="docutils literal notranslate"><span class="pre">flight-pipeline</span> <span class="pre">--help</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#when-running-the-help-command-flight-pipeline-flight-update-help">When running the help command <code class="docutils literal notranslate"><span class="pre">flight-pipeline</span> <span class="pre">flight-update</span> <span class="pre">--help</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#options">Options:</a></li>
@@ -94,9 +99,35 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">settings_file</span></code>: Elasticsearch connection settings file path. To avoid a long command string, this can be set using the <code class="docutils literal notranslate"><span class="pre">$FLIGHT_CONNECTION</span></code> environment variable instead.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">stac_template</span></code>: STAC template to apply to all new records. To avoid a long command string, this can be set using the <code class="docutils literal notranslate"><span class="pre">$STAC_TEMPLATE</span></code> environment variable instead.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code>: Level of logging (<code class="docutils literal notranslate"><span class="pre">-v</span></code> gives info messages, <code class="docutils literal notranslate"><span class="pre">-vv</span></code> gives debug messages)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">keep_files</span></code>: Default behaviour is to move files from the <code class="docutils literal notranslate"><span class="pre">new_flights</span></code> directory into the <code class="docutils literal notranslate"><span class="pre">archive</span></code> after pushing. For testing it may be optimal to turn this off, by adding this flag.</p></li>
 </ul>
-<p>Run with command <code class="docutils literal notranslate"><span class="pre">flight-pipeline</span> <span class="pre">flight-update</span></code> if all above values are configured using environment variables etc.</p>
-<p>Or run with command <code class="docutils literal notranslate"><span class="pre">flight-pipeline</span> <span class="pre">flight-update</span> <span class="pre">--archive_path</span> <span class="pre">../../</span> <span class="pre">--flights_dir</span> <span class="pre">../../</span> <span class="pre">--add_mode</span> <span class="pre">y</span> <span class="pre">--update_mode</span> <span class="pre">n</span> <span class="pre">--update_id</span> <span class="pre">n</span></code> where all the arguments are filled in already</p>
+<section id="using-environment-variables">
+<h3>Using environment variables<a class="headerlink" href="#using-environment-variables" title="Link to this heading"></a></h3>
+<blockquote>
+<div><ul class="simple">
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">FLIGHT_CONFIG</span></code>, <code class="docutils literal notranslate"><span class="pre">FLIGHT_CONNECTION</span></code> and <code class="docutils literal notranslate"><span class="pre">STAC_TEMPLATE</span></code>.</p></li>
+<li><p>Run with command <code class="docutils literal notranslate"><span class="pre">flight-pipeline</span> <span class="pre">flight-update</span></code> if all above values are configured using environment variables etc.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="using-flags-with-the-config-file">
+<h3>Using flags with the config file<a class="headerlink" href="#using-flags-with-the-config-file" title="Link to this heading"></a></h3>
+<p>CLI flags will override any environment variables that are set.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Run with command <code class="docutils literal notranslate"><span class="pre">flight-pipeline</span> <span class="pre">flight-update</span> <span class="pre">--config_file</span> <span class="pre">/path/to/config</span> <span class="pre">--settings_file</span> <span class="pre">/path/to/json</span> <span class="pre">--stac_template</span> <span class="pre">/path/to/template</span></code>.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="without-using-config-file">
+<h3>Without using config file<a class="headerlink" href="#without-using-config-file" title="Link to this heading"></a></h3>
+<p>The flights paths can be set directly, but <code class="docutils literal notranslate"><span class="pre">settings_file</span></code> and <code class="docutils literal notranslate"><span class="pre">stac_template</span></code> need to be provided still (flag or environment variable.)</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Run with command <code class="docutils literal notranslate"><span class="pre">flight-pipeline</span> <span class="pre">flight-update</span> <span class="pre">--new_flights_dir</span> <span class="pre">/add</span> <span class="pre">--archive_path</span> <span class="pre">/archive</span> <span class="pre">--settings_file</span> <span class="pre">/path/to/json</span> <span class="pre">--stac_template</span> <span class="pre">/path/to/template</span></code></p></li>
+</ul>
+</div></blockquote>
+</section>
 </section>
 <section id="when-running-the-help-command-flight-pipeline-help">
 <h2>When running the help command <code class="docutils literal notranslate"><span class="pre">flight-pipeline</span> <span class="pre">--help</span></code><a class="headerlink" href="#when-running-the-help-command-flight-pipeline-help" title="Link to this heading"></a></h2>
