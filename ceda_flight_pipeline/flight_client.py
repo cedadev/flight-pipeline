@@ -7,6 +7,9 @@
 import json
 import os, sys
 import numpy as np
+import glob
+
+import logging
 
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
@@ -22,6 +25,29 @@ import requests
 
 import urllib3
 urllib3.disable_warnings()
+
+logger = logging.getLogger(__name__)
+from ceda_flight_pipeline.utils import logstream
+logger.addHandler(logstream)
+logger.propagate = False
+
+def moveOldFiles(rootdir, archive, files):
+    """
+    Move the written files from the root directory given in the config file to the archive
+
+    If keyword DELETE given instead of archive then the flight records will be deleted after being pushed
+    """
+
+    # Move the written files from rootdir to the archive
+    if archive != "DELETE":
+        for file in files:
+            path = os.path.join(rootdir, file.split("/")[-1])
+            new_path = os.path.join(archive, file.split("/")[-1])
+            os.system("mv {} {}".format(path, new_path))
+    else:
+        for file in files:
+            path = os.path.join(rootdir, file.split("/")[-1])
+            os.system("rm {}".format(path))
 
 def resolve_link(path):
     logger.debug("Debug: Resolving link for path %s", path)
@@ -52,28 +78,28 @@ class ESFlightClient(SimpleClient):
     documents to elasticsearch.
     """
 
-    def __init__(self, rootdir, es_config=os.environ.get("SETTINGS_FILE")):
-        self.rootdir = rootdir
-        logger.info("Info: Initialising ES Flight Client")
+    def __init__(self, index, es_config: str, stac_template: str):
+        logger.info("Initialising ES Flight Client")
 
-        super().__init__("stac-flightfinder-items-test", es_config=es_config)
+        super().__init__(index, es_config=es_config)
 
-        with open(os.environ.get("STAC_TEMPLATE")) as f:
-            logger.info("Info: Reading stac templace JSON file")
+        with open(stac_template) as f:
+            logger.info(" > Reading stac templace JSON file")
             self.required_keys = json.load(f).keys()
 
     def push_flights(self, file_list):
         flight_list = []
         if isinstance(file_list[0], str):
             for file in file_list:
-                with open(os.path.join(self.rootdir, file)) as f:
+                with open(file) as f:
                     flight_list.append(json.load(f))
+
         elif isinstance(file_list[0], dict):
             flight_list = file_list
         else:
             logger.error("Error: Flight file not found %s", str(file_list[0]))
             raise FileNotFoundError(file_list[0])
-        logger.info("Info: Flights to be pushed %s", str(flight_list))
+        logger.info(f"{len(flight_list)} Flights to be pushed")
         self.push_records(flight_list)
         
     def preprocess_records(self, file_list):
@@ -97,11 +123,14 @@ class ESFlightClient(SimpleClient):
         self.linked = 0
         self.total = len(file_list)
         records = []
-        for refs in file_list:
+        for fid, refs in enumerate(file_list):
             if '_source' in refs.keys():
                 id = refs['_id']
                 source = refs['_source']
                 source['es_id'] = id
+            else:
+                source = refs
+
             source = set_defaults(source)
 
             if 'es_id' in source.keys():
@@ -127,14 +156,11 @@ class ESFlightClient(SimpleClient):
                 if rq not in source:
                     missing.append(rq)
             if len(missing) > 0:
-                logger.error("Error: File is missing entries - %s", str(missing))
-                raise TypeError(f"File {file} is missing entries:{missing}")
+                raise TypeError(f"Flight {fid} is missing entries: {missing}")
 
             source['last_update'] = datetime.strftime(datetime.now(),'%Y-%m-%d %H:%M:%S')
 
-            refs['_source'] = source
-            records.append(refs)
-
+            records.append(source)
         return records
 
     def obtain_field(self, id, fieldnames):
@@ -257,6 +283,36 @@ class ESFlightClient(SimpleClient):
             #}
         })
 
+    def addFlights(self, archive, rootdir, repush=False, move_files=False):
+        """Function for adding flights"""
+    
+        checked_list = []
+
+        if repush:
+            files_list = glob.glob(f'{archive}/*')
+        else:
+            files_list = glob.glob(f'{rootdir}/*')
+
+        # All flights ok to repush - handled by new client.
+        checked_list = list(files_list)
+
+        # Push new flights to index
+        logger.info("Identified {} flights".format(len(checked_list)))
+        if len(checked_list) > 0:
+            self.push_flights(checked_list)
+            logger.info("Pushed flights to ES Index")
+            if not repush and move_files:
+                moveOldFiles(rootdir, archive, checked_list)
+                logger.info("Removed local files from push directory - moved to archive")
+        else:
+            logger.info("Exiting flight pipeline")
+
+    def updateFlights(self, update):
+        """
+        Update flights using resolve_link() from flightpipe/flight_client module.
+        """
+        from ceda_flight_pipeline import updaters
+        updaters[update](self)
 
 if __name__ == "__main__":
     print(__file__)

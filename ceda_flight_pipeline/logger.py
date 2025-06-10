@@ -6,69 +6,94 @@ __copyright__ = "Copyright 2025 United Kingdom Research and Innovation"
 import logging
 import os
 
+logger = logging.getLogger(__name__)
+from ceda_flight_pipeline.utils import logstream, formatter
+logger.addHandler(logstream)
+logger.propagate = False
 
-def setup_logging(enable_logging=True, console_logging=True, log_file = "") -> None:
+levels = [
+    logging.WARN,
+    logging.INFO,
+    logging.DEBUG,
+]
+
+
+def setup_logging(
+        verbose: int = 0, 
+        console_logging: bool = True, 
+        log_file: str = "") -> None:
     """
     Sets up logging configuration. If `enable_logging` is False, no logging will occur.
     
     :param enable_logging: Flag to enable/disable logging.
     """
 
+    fh = None
 
-    if log_file == '':
-        print("Error: Please fill in the third directory in dirconfig file")
-        return
+    if log_file != '':
+        fh = logging.FileHandler(log_file),  # Write output to file
+        fh.setLevel(levels[verbose])
+        fh.setFormatter(formatter)
 
-    handlers = [
-            logging.FileHandler(log_file),  # Write output to file
-        ]
-
-    if console_logging:
-        handlers.append(logging.StreamHandler())   # Logs to the console if enabled
-
-
-    if enable_logging:
-        logging.basicConfig(
-            level=logging.DEBUG, # Capture all levels
-            format='%(asctime)s - %(levelname)s - %(message)s',
-            handlers=handlers
-        )
-    else:
-        # Disable logging by setting a null handler
-        logging.basicConfig(level=logging.CRITICAL)
-        #NOTSET for no alerts at all
+    for name in logging.root.manager.loggerDict:
+        lg = logging.getLogger(name)
+        lg.setLevel(levels[verbose])
+        if fh is not None:
+            lg.addHandler(fh)
 
 
-def get_config():
+def get_config(cfg_file) -> tuple:
     """
     Function to get logging info from config file
     """
 
-    file = os.environ.get("CONFIG_FILE", None) or "dirconfig"
+    try:
+        with open(cfg_file) as f: # 'r' is default if not specified.
+            content = [r.strip() for r in f.readlines() if not r.startswith('#')] # Removes the '\n' from all lines
+    
+    except FileNotFoundError:
+        logger.debug("Config file not found.")
+        return None, None, None, None, None, None
+    
+    new_flights = content[0]
+    archive     = content[1]
+    logfile     = content[2]
+
+    values = {i.split('=')[0] : i.split('=')[1] for i in content[3:]}
+
+    verbose = values.get('verbose',None)
+    console_logging = values.get('console_logger',None)
+    stac_index = values.get('index',None)
+
+    return new_flights, archive, logfile, verbose, console_logging, stac_index
+
+
+def setup_from_config(
+        new_flights: str = None, 
+        archive: str = None, 
+        logfile: str = None, 
+        verbose: int = None, 
+        console_logging: bool = None, 
+        stac_index: str = None,
+        cfg_file: str = 'dirconfig'):
+
+    new_flights_d, archive_d, logfile_d, verbose_d, console_logging_d, stac_index_d = get_config(cfg_file)
+
+    # Apply defaults from config
+    new_flights = new_flights or new_flights_d
+    archive = archive or archive_d
+    logfile = logfile or logfile_d
+    verbose = verbose or verbose_d
+    console_logging = console_logging or console_logging_d
+    stac_index = stac_index or stac_index_d
 
     try:
 
-        with open(file) as f: # 'r' is default if not specified.
-            content = [r.strip() for r in f.readlines()] # Removes the '\n' from all lines
-    
-    except FileNotFoundError:
-        print("Error: Config file not found.")
-    
-        return
+        # Set up logging with a flag (True to enable logging, False to disable logging)
+        setup_logging(verbose, console_logging, logfile)  # Change to False to disable logging
+    except:
+        # Set up logging with default parameters
+        setup_logging()
 
-
-    return content[5].replace('\n',''), content[7].replace('\n',''), content[9].replace('\n','')
-
-
-config_info = get_config()
-try:
-    log_file, enable_logging, console_logging = config_info[0], config_info[1], config_info[2]
-
-    # Set up logging with a flag (True to enable logging, False to disable logging)
-    setup_logging(enable_logging, console_logging, log_file)  # Change to False to disable logging
-except:
-    # Set up logging with default parameters
-    setup_logging()
-
-logger = logging.getLogger(__name__)
+    return new_flights, archive, stac_index
 

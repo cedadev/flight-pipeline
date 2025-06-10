@@ -2,6 +2,15 @@ import os, sys
 import json
 import numpy as np
 
+import logging
+logger = logging.getLogger(__name__)
+
+logging.basicConfig(level=logging.WARNING)
+logstream = logging.StreamHandler()
+
+formatter = logging.Formatter('%(levelname)s [%(name)s]: %(message)s')
+logstream.setFormatter(formatter)
+
 def jsonWrite(path, file, content):
     if not os.path.exists(path):
         os.makedirs(path)

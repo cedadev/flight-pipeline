@@ -4,6 +4,13 @@
   - Copied from elastic_scrapers/scraper_code
 '''
 
+import logging
+
+logger = logging.getLogger(__name__)
+from ceda_flight_pipeline.utils import logstream
+logger.addHandler(logstream)
+logger.propagate = False
+
 from ceda_flight_pipeline.utils import jsonWrite
 
 def addList(item,id):

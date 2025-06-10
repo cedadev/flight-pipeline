@@ -1,8 +1,15 @@
 import json
 import os
+from typing import Union
 
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
+
+import logging
+logger = logging.getLogger(__name__)
+from ceda_flight_pipeline.utils import logstream
+logger.addHandler(logstream)
+logger.propagate = False
 
 def gen_id():
     import random
@@ -24,13 +31,11 @@ default_rec = {
 
 settings_default = {
     "hosts": [
-        "https://es10.ceda.ac.uk:9200"
+        "https://elasticsearch.ceda.ac.uk"
     ],
     "headers": {
         "x-api-key": ""
-    },
-    "verify_certs": 0,
-    "ssl_show_warn": 0
+    }
 }
 
 def create_settings(es_config='es_settings.json'):
@@ -51,7 +56,7 @@ class SimpleClient:
     """
     Simple Elasticsearch-Python client for bulk operations
     """
-    def __init__(self,index, es_config=None):
+    def __init__(self, index: str, es_config: Union[dict,str]):
         """
         Initialise client, pull credentials from a configuration file if present
         and create an underlying client within this class.
@@ -80,34 +85,23 @@ class SimpleClient:
         Final processing step to add ids to new records if they are not already present.
         """
         for r in records:
-            rec = self.establish_id(r)
-            yield rec
+            yield r
 
     def get_size(self):
         md = self.es.cat.count(index=self.index, params={"format": "json"})[0]
         return md['count']
-
-    def establish_id(self, record):
-        """
-        Add _id and other required fields before pushing new entries.
-        """
-        if '_id' not in record:
-            record = {
-                "_index": self.index,
-                "_type": "_doc",
-                "_id":gen_id(),
-                "_score": 1.0,
-                "_source":dict(record)
-            }
-        return record
-
 
     def push_records(self, records):
         """
         Push records using bulk helper tool.
         """
         records = self.preprocess_records(records)
-        bulk(self.es, self.process_records(records))
+        for r in records:
+            self.es.update(
+                index=self.index,
+                id=r['es_id'],
+                body={'doc':r,'doc_as_upsert':True}
+            )
 
     def pull_records(self):
         """
