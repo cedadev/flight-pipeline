@@ -24,9 +24,27 @@ The standard command to run the flight pipeline is ``flight-pipeline flight-uplo
 
 - ``verbose``: Level of logging (``-v`` gives info messages, ``-vv`` gives debug messages)
 
-Run with command ``flight-pipeline flight-update`` if all above values are configured using environment variables etc.
+- ``keep_files``: Default behaviour is to move files from the ``new_flights`` directory into the ``archive`` after pushing. For testing it may be optimal to turn this off, by adding this flag.
 
-Or run with command ``flight-pipeline flight-update --archive_path ../../ --flights_dir ../../ --add_mode y --update_mode n --update_id n`` where all the arguments are filled in already
+Using environment variables
+---------------------------
+
+ - Set ``FLIGHT_CONFIG``, ``FLIGHT_CONNECTION`` and ``STAC_TEMPLATE``.
+ - Run with command ``flight-pipeline flight-update`` if all above values are configured using environment variables etc.
+
+Using flags with the config file
+--------------------------------
+
+CLI flags will override any environment variables that are set.
+
+ - Run with command ``flight-pipeline flight-update --config_file /path/to/config --settings_file /path/to/json --stac_template /path/to/template``.
+
+Without using config file
+-------------------------
+
+The flights paths can be set directly, but ``settings_file`` and ``stac_template`` need to be provided still (flag or environment variable.)
+
+ - Run with command ``flight-pipeline flight-update --new_flights_dir /add --archive_path /archive --settings_file /path/to/json --stac_template /path/to/template``
 
 
 When running the help command ``flight-pipeline --help``

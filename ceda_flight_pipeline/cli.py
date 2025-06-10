@@ -107,7 +107,7 @@ def main():
 )
 
 @click.option(
-    "--move_files",
+    "--keep_files",
     is_flag=True,
     default=False,
     help="Move files after pushing",
@@ -124,10 +124,13 @@ def flight_update(
         verbose,
         console_log,
         stac_index,
-        move_files):
+        keep_files):
     """
     Main function running the flight update scripts based on the given command line parameters
     """
+
+    move_files = not keep_files
+
     REPUSH = False
     add = True
 
