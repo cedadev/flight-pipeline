@@ -27,7 +27,12 @@ import urllib3
 urllib3.disable_warnings()
 
 logger = logging.getLogger(__name__)
-from ceda_flight_pipeline.utils import logstream, STAC_TEMPLATE
+from ceda_flight_pipeline.utils import (
+    logstream, 
+    STAC_TEMPLATE, 
+    SPECIFIC_REFRESH,
+    GENERAL_REFRESH
+)
 logger.addHandler(logstream)
 logger.propagate = False
 
@@ -85,9 +90,10 @@ class ESFlightClient(SimpleClient):
 
         super().__init__(index, es_config=es_config)
 
-        with open(stac_template) as f:
-            logger.info(" > Reading stac templace JSON file")
-            self.required_keys = json.load(f).keys()
+        if isinstance(stac_template, str):
+            with open(stac_template) as f:
+                logger.info(" > Reading stac templace JSON file")
+                self.required_keys = json.load(f).keys()
 
     def push_flights(self, file_list):
         flight_list = []
@@ -315,6 +321,51 @@ class ESFlightClient(SimpleClient):
         """
         from ceda_flight_pipeline import updaters
         updaters[update](self)
+
+    def refresh(self, refresh_level: int):
+        """
+        Refresh the catalogue links for specific or all records.
+        """
+
+        update_recs = []
+        query = GENERAL_REFRESH
+        if refresh_level == 1:
+            query = SPECIFIC_REFRESH
+            logger.info(' > Using specific query for refresh')
+
+        logger.info('Performing index refresh')
+        records = self.es.search(index=self.index, query=query, size=10000)
+
+        logger.info(f'Search returned {len(records["hits"]["hits"])} records')
+
+        for record in records['hits']['hits']:
+            logger.info(f'Checking {record["_source"]["description_path"]}')
+            source = record['_source']
+            link = resolve_link(source['description_path'])
+
+            if link:
+                logger.info(' > Found valid MOLES link')
+
+                if 'catalogue_link' not in source:
+                    logger.info(' >> Confirmed as new link')
+                    source['catalogue_link'] = f'https://catalogue.ceda.ac.uk/uuid/{link}'
+                    update_recs.append(source)
+                    continue
+
+                if link != source['catalogue_link']:
+                    logger.info(' >> Confirmed as updated link')
+                    source['catalogue_link'] = f'https://catalogue.ceda.ac.uk/uuid/{link}'
+                    update_recs.append(source)
+                    continue
+
+        if len(update_recs) > 0:
+            logger.info(f'Updating {len(update_recs)} records')
+            for rec in update_recs:
+                self.es.update(
+                    index=self.index,
+                    id=rec['es_id'],
+                    body={'doc':rec,'doc_as_upsert':True}
+                )
 
 if __name__ == "__main__":
     print(__file__)

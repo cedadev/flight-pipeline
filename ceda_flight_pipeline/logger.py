@@ -27,8 +27,8 @@ def setup_logging(
     
     :param enable_logging: Flag to enable/disable logging.
     """
-
     fh = None
+    log_file = log_file or ''
 
     if log_file != '':
         fh = logging.FileHandler(log_file),  # Write output to file
@@ -40,19 +40,21 @@ def setup_logging(
         lg.setLevel(levels[verbose])
         if fh is not None:
             lg.addHandler(fh)
-
+        lg.debug(f'Reset handler for {name}')
 
 def get_config(cfg_file) -> tuple:
     """
     Function to get logging info from config file
     """
 
+    cfg_file = cfg_file or ''
+
     try:
         with open(cfg_file) as f: # 'r' is default if not specified.
             content = [r.strip() for r in f.readlines() if not r.startswith('#')] # Removes the '\n' from all lines
     
     except FileNotFoundError:
-        logger.debug("Config file not found.")
+        logger.info("Config file not found.")
         return None, None, None, None, None, None
     
     new_flights = content[0]
@@ -66,7 +68,6 @@ def get_config(cfg_file) -> tuple:
     stac_index = values.get('index',None)
 
     return new_flights, archive, logfile, verbose, console_logging, stac_index
-
 
 def setup_from_config(
         new_flights: str = None, 
@@ -87,13 +88,8 @@ def setup_from_config(
     console_logging = console_logging or console_logging_d
     stac_index = stac_index or stac_index_d
 
-    try:
-
-        # Set up logging with a flag (True to enable logging, False to disable logging)
-        setup_logging(verbose, console_logging, logfile)  # Change to False to disable logging
-    except:
-        # Set up logging with default parameters
-        setup_logging()
+    # Set up logging with a flag (True to enable logging, False to disable logging)
+    setup_logging(verbose, console_logging, logfile)  # Change to False to disable logging
 
     return new_flights, archive, stac_index
 

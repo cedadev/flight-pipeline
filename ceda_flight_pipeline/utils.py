@@ -25,6 +25,22 @@ STAC_TEMPLATE = {
     "links":[]
 }
 
+SPECIFIC_REFRESH = {
+    "bool": {
+        "must_not": [
+            {
+                "exists": {
+                    "field": "catalogue_link"
+                }
+            }
+        ]
+    }
+}
+
+GENERAL_REFRESH = {
+    "match_all":{},
+}
+
 def jsonWrite(path, file, content):
     if not os.path.exists(path):
         os.makedirs(path)

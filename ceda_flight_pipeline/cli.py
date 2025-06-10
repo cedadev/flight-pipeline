@@ -63,6 +63,15 @@ def main():
 )
 
 @click.option(
+    "--refresh",
+    "-r",
+    default=0,
+    count=True,
+    type=int,
+    help="Refresh records, namely to identify catalogue links. Add extra `-r` flags to be more thorough",
+)
+
+@click.option(
     "--config_file",
     default=None,
     type=str,
@@ -124,7 +133,8 @@ def flight_update(
         verbose,
         console_log,
         stac_index,
-        keep_files):
+        keep_files,
+        refresh):
     """
     Main function running the flight update scripts based on the given command line parameters
     """
@@ -154,16 +164,23 @@ def flight_update(
         stac_index=stac_index,
         cfg_file=config_file)
     
+    logger.info("Setting up Flight Client interface")
+    
     fclient = ESFlightClient(stac_index, settings_file, stac_template=stac_template)
+
+    if refresh > 0:
+        logger.info("Performing index refresh for elasticsearch")
+        fclient.refresh(refresh)
+        return
 
     if add:
         # Ensure archive_path and new_flights_dir are not empty
         if not archive_path:
-            print("Error: Please provide an archive path.")
-            sys.exit(1)
+            logger.error("Please provide an archive path.")
+            return
         elif not new_flights_dir:
-            print("Error: Please provide a directory for flights.")
-            sys.exit(1)
+            logger.error("Please provide a directory for flights.")
+            return
         else:
             fclient.addFlights(
                 archive_path,
@@ -178,8 +195,8 @@ def flight_update(
         fclient.reindex(reindex)
 
     else:
-        print("Error: Mode unrecognized. Please choose either add or update.")
-        sys.exit(1)
+        logger.error("Mode unrecognized. Please choose either add or update.")
+        return
 
 
 if __name__ == "__main__":
